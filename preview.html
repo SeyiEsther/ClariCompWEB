@@ -115,13 +115,24 @@
     .em-unit  { font-family: var(--mono); font-size: 10px; color: var(--text-light); margin-top: 3px; }
     .em-value--green { color: #2f7a52; }
 
+    /* Formula trail */
     .leg-breakdown {
-      font-size: 12px; color: var(--text-mid); padding: 10px 16px;
-      border-top: 1px solid var(--border); display: none; background: var(--bg);
+      border-top: 1px solid var(--border); display: none;
+      background: var(--bg); max-height: 480px; overflow-y: auto;
     }
-    .leg-row   { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; gap: 8px; }
-    .leg-route { color: var(--text-mid); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-    .leg-kg    { color: #2f7a52; font-weight: 600; flex-shrink: 0; font-family: var(--mono); font-size: 12px; }
+    .trail-leg       { padding: 14px 18px; border-bottom: 1px solid var(--border); }
+    .trail-leg:last-child { border-bottom: none; }
+    .trail-leg--empty { color: var(--text-light); font-size: 12px; font-style: italic; padding: 12px 18px; }
+    .trail-head      { font-family: var(--mono); font-size: 10.5px; letter-spacing: .07em; text-transform: uppercase; color: var(--navy); margin-bottom: 10px; font-weight: 500; }
+    .trail-row       { display: grid; grid-template-columns: 88px 1fr auto; gap: 8px; align-items: baseline; padding: 2.5px 0; }
+    .trail-row--formula { background: var(--card); border-radius: 4px; padding: 6px 8px; margin: 6px -8px 2px; border: 1px solid var(--border); }
+    .trail-row--total   { border-top: 1px solid var(--border); margin-top: 4px; padding-top: 8px; }
+    .trail-k  { font-family: var(--mono); font-size: 10px; color: var(--text-light); letter-spacing: .05em; text-transform: uppercase; padding-top: 1px; }
+    .trail-v  { font-size: 13px; color: var(--text); }
+    .trail-v.mono  { font-family: var(--mono); font-size: 11.5px; }
+    .trail-v.total { font-family: var(--serif); font-size: 18px; color: #2f7a52; }
+    .trail-note    { font-family: var(--mono); font-size: 10px; color: var(--text-light); letter-spacing: .04em; text-align: right; white-space: nowrap; }
+    .trail-auto    { color: #a07024; }
 
     /* Form card */
     .form-card {
@@ -828,57 +839,148 @@
     });
   }
 
+  // ── Mode labels ───────────────────────────────────────────────────────────────
+  const MODE_LABELS = {
+    'Flight-Domestic':           'Flight · Domestic',
+    'Flight-ShortHaul-Economy':  'Flight · Short Haul · Economy',
+    'Flight-ShortHaul-Business': 'Flight · Short Haul · Business',
+    'Flight-LongHaul-Economy':   'Flight · Long Haul · Economy',
+    'Flight-LongHaul-Business':  'Flight · Long Haul · Business',
+    'Flight-LongHaul-First':     'Flight · Long Haul · First',
+    'Train-National':            'Train · National Rail',
+    'Train-International':       'Train · International',
+    'Car-Petrol':                'Car · Petrol',
+    'Car-Diesel':                'Car · Diesel',
+    'Car-Hybrid':                'Car · Hybrid',
+    'Car-Electric':              'Car · Electric',
+    'Taxi':                      'Taxi',
+    'Ferry-Foot':                'Ferry · Foot Passenger',
+    'Ferry-Car':                 'Ferry · Car Passenger',
+  };
+
+  // ── Per-leg emission engine ────────────────────────────────────────────────
+  // All distances via Haversine great circle (km).
+  // Flights: auto-classify haul by distance so the correct DEFRA factor applies.
+  //   <= 500 km  → Domestic
+  //   <= 3700 km → Short Haul (preserves Economy/Business class)
+  //   >  3700 km → Long Haul  (preserves Economy/Business/First class)
+  // Road/ferry modes: factor is per vehicle-km (vkm); total = dist × EF regardless
+  //   of passenger count (one vehicle emits that amount). Per-person = total ÷ pax.
+  // All other modes: factor is per passenger-km (pkm); total = dist × EF × pax.
+  function calcLeg(c1, c2, modeKey, pax) {
+    if (!c1 || !c2) return null;
+    const dist = haversine(c1, c2);
+
+    let mode = modeKey;
+    if (modeKey.startsWith('Flight')) {
+      const cls = modeKey.endsWith('Business') ? 'Business'
+                : modeKey.endsWith('First')    ? 'First'
+                :                               'Economy';
+      if (dist <= 500)       mode = 'Flight-Domestic';
+      else if (dist <= 3700) mode = cls === 'First' ? 'Flight-ShortHaul-Business' : `Flight-ShortHaul-${cls}`;
+      else                   mode = `Flight-LongHaul-${cls}`;
+    }
+
+    const ef = EF[mode];
+    if (!ef) return null;
+
+    const isVkm    = VEHICLE_KM.has(mode);
+    const totalKg  = isVkm ? dist * ef             : dist * ef * pax;
+    const perPaxKg = isVkm ? dist * ef / Math.max(1, pax) : dist * ef;
+
+    return { dist, mode, ef, isVkm, totalKg, perPaxKg, autoClassified: mode !== modeKey };
+  }
+
   // ── Preview update ────────────────────────────────────────────────────────────
   function updatePreview() {
-    const allCities = [resolvedCities.origin, ...midStops.map(s => s.city), resolvedCities.dest];
+    const allCities   = [resolvedCities.origin, ...midStops.map(s => s.city), resolvedCities.dest];
     const modeSelects = getAllModeSelects();
     const pax = Math.max(1, parseInt(document.getElementById('passengers').value) || 1);
 
     let totalDist = 0, totalKg = 0;
-    const legData = [];
+    const legs = [];
 
     for (let i = 0; i < modeSelects.length; i++) {
-      const c1   = allCities[i];
-      const c2   = allCities[i + 1];
-      const mode = modeSelects[i]?.value || '';
-      const ef   = EF[mode] || 0;
-      const from = c1?.name || (i === 0 ? document.getElementById('origin-input').value : `Stop ${i}`);
-      const to   = c2?.name || (i + 1 === allCities.length - 1 ? document.getElementById('dest-input').value : `Stop ${i+1}`);
+      const c1      = allCities[i];
+      const c2      = allCities[i + 1];
+      const modeKey = modeSelects[i]?.value || '';
+      const from    = c1?.name || (i === 0 ? document.getElementById('origin-input').value : `Stop ${i}`);
+      const to      = c2?.name || (i + 1 === allCities.length - 1 ? document.getElementById('dest-input').value : `Stop ${i+1}`);
+      const result  = calcLeg(c1, c2, modeKey, pax);
 
-      if (c1 && c2 && ef > 0) {
-        const legDist = haversine(c1, c2);
-        const legKg   = VEHICLE_KM.has(mode) ? Math.round(legDist * ef) : Math.round(legDist * ef * pax);
-        legData.push({ from, to, dist: legDist, kg: legKg, ok: true });
-        totalDist += legDist;
-        totalKg   += legKg;
+      if (result) {
+        totalDist += result.dist;
+        totalKg   += result.totalKg;
+        legs.push({ from, to, originalMode: modeKey, ok: true, ...result });
       } else {
-        legData.push({ from, to, dist: 0, kg: 0, ok: false });
+        legs.push({ from, to, originalMode: modeKey, ok: false });
       }
     }
 
-    if (appState.isReturn && legData.length === 1 && legData[0].ok) {
-      totalDist *= 2; totalKg *= 2;
+    if (appState.isReturn && legs.length === 1 && legs[0].ok) {
+      totalDist *= 2;
+      totalKg   *= 2;
     }
 
-    const anyOk = legData.some(l => l.ok);
-    document.getElementById('em-legs').textContent  = legData.length + (appState.isReturn ? '+ret' : '');
+    const anyOk = legs.some(l => l.ok);
+
+    // Stat bar
+    document.getElementById('em-legs').textContent  = legs.length + (appState.isReturn ? '+ret' : '');
     document.getElementById('em-dist').textContent  = anyOk ? totalDist.toLocaleString() : '–';
-    document.getElementById('em-total').textContent = anyOk ? totalKg.toLocaleString()   : '–';
+    document.getElementById('em-total').textContent = anyOk ? totalKg.toLocaleString(undefined, {maximumFractionDigits: 1}) : '–';
     document.getElementById('em-preview').style.display = anyOk ? 'flex' : 'none';
 
+    // Formula trail
     const bd = document.getElementById('leg-breakdown');
-    if (legData.length > 1) {
+    if (anyOk) {
       bd.style.display = 'block';
-      bd.innerHTML = legData.map((l, i) => l.ok
-        ? `<div class="leg-row">
-             <span class="leg-route">Leg ${i+1}: ${l.from} → ${l.to} (${l.dist.toLocaleString()} km)</span>
-             <span class="leg-kg">${l.kg.toLocaleString()} kg</span>
-           </div>`
-        : `<div class="leg-row">
-             <span class="leg-route" style="color:var(--text-light)">Leg ${i+1}: ${l.from} → ${l.to}</span>
-             <span class="leg-kg" style="color:var(--text-light)">–</span>
-           </div>`
-      ).join('');
+      bd.innerHTML = legs.map((l, i) => {
+        if (!l.ok) return `<div class="trail-leg trail-leg--empty">Leg ${i+1}: ${l.from} → ${l.to} · enter both cities to calculate</div>`;
+
+        const unitType   = l.isVkm ? 'vkm' : 'pkm';
+        const formulaStr = l.isVkm
+          ? `${l.dist.toLocaleString()} km &times; ${l.ef.toFixed(6)} kgCO&#x2082;e/vkm`
+          : `${l.dist.toLocaleString()} km &times; ${l.ef.toFixed(6)} kgCO&#x2082;e/pkm &times; ${pax} pax`;
+        const resultStr  = appState.isReturn && legs.length === 1
+          ? `${(l.totalKg * 2).toFixed(1)} kgCO&#x2082;e (×2 return)`
+          : `${l.totalKg.toFixed(1)} kgCO&#x2082;e`;
+        const autoNote   = l.autoClassified
+          ? `<span class="trail-note trail-auto">auto from ${l.dist.toLocaleString()} km distance</span>` : '';
+        const paxRow     = pax > 1
+          ? `<div class="trail-row"><span class="trail-k">Passengers</span><span class="trail-v">${pax}</span><span class="trail-note"></span></div>` : '';
+        const perPaxRow  = pax > 1
+          ? `<div class="trail-row"><span class="trail-k">Per person</span><span class="trail-v">${l.perPaxKg.toFixed(1)} kgCO&#x2082;e</span><span class="trail-note">${l.isVkm ? 'shared vehicle' : ''}</span></div>` : '';
+
+        return `<div class="trail-leg">
+          <div class="trail-head">Leg ${i+1} &middot; ${l.from} &rarr; ${l.to}</div>
+          <div class="trail-row">
+            <span class="trail-k">Distance</span>
+            <span class="trail-v">${l.dist.toLocaleString()} km</span>
+            <span class="trail-note">Haversine great circle</span>
+          </div>
+          <div class="trail-row">
+            <span class="trail-k">Mode</span>
+            <span class="trail-v">${MODE_LABELS[l.mode] || l.mode}</span>
+            ${autoNote}
+          </div>
+          <div class="trail-row">
+            <span class="trail-k">Factor</span>
+            <span class="trail-v mono">${l.ef.toFixed(6)} kgCO&#x2082;e/${unitType}</span>
+            <span class="trail-note">DEFRA 2025 &middot; Table 5</span>
+          </div>
+          ${paxRow}
+          <div class="trail-row trail-row--formula">
+            <span class="trail-k">Formula</span>
+            <span class="trail-v mono" style="grid-column:2/4">${formulaStr} = <strong>${l.totalKg.toFixed(1)}</strong></span>
+          </div>
+          ${perPaxRow}
+          <div class="trail-row trail-row--total">
+            <span class="trail-k">Total</span>
+            <span class="trail-v total">${resultStr}</span>
+            <span class="trail-note"></span>
+          </div>
+        </div>`;
+      }).join('');
     } else {
       bd.style.display = 'none';
     }
@@ -886,7 +988,7 @@
     const routeLabel = allCities.filter(Boolean).map(c => c.name).join(' → ');
     document.getElementById('map-title').textContent = routeLabel || 'Route map';
     document.getElementById('map-meta').textContent  = anyOk
-      ? `${totalDist.toLocaleString()} km · ${(totalKg / 1000).toFixed(2)} tCO₂e`
+      ? `${totalDist.toLocaleString()} km · ${(totalKg / 1000).toFixed(3)} tCO₂e`
       : 'Select cities to see estimate';
 
     drawCanvas(allCities);
