@@ -37,6 +37,7 @@
             <a href="#limitations" style="color: var(--text-mid);">Limitations</a>
             <a href="#standards" style="color: var(--text-mid);">Standards alignment</a>
             <a href="#audit" style="color: var(--text-mid);">For your audit</a>
+            <a href="#transport" style="color: var(--text-mid);">Transport mode physics</a>
             <a href="#factor-table" style="color: var(--text-mid);">Full factor table</a>
           </nav>
         </aside>
@@ -116,6 +117,257 @@
             <h2 style="font-size: 34px; margin-bottom: 14px;">The formula trail, in practice.</h2>
             <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Every row in your ClariComp file carries: the input fields (date, origin, destination, mode, class, passenger count); the computed distance with method; the DEFRA factor reference and value; the resulting emission; and the row-level confidence. The same trail is appended to your published report.</p>
             <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">When an auditor asks "where did this number come from", you can answer the question at the level of a single trip. That is the audit posture ClariComp was built for.</p>
+          </div>
+
+          <!-- Transport mode physics -->
+          <div id="transport" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">09 · Transport mode reference</div>
+            <h2 style="font-size: 34px; margin-bottom: 6px;">The physics behind the numbers.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 64ch; margin-bottom: 40px;">Each transport mode operates under distinct physical constraints. Understanding these is what makes the DEFRA factor choices defensible — and what an auditor is implicitly checking when they ask how a number was derived.</p>
+
+            <style>
+              .tm { border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 24px; }
+              .tm__head { display: grid; grid-template-columns: 48px 1fr; gap: 0; }
+              .tm__num { background: var(--navy); color: var(--white); font-family: var(--mono); font-size: 11px; letter-spacing: 0.1em; writing-mode: vertical-rl; text-orientation: mixed; transform: rotate(180deg); display: flex; align-items: center; justify-content: center; padding: 24px 14px; }
+              .tm__intro { padding: 28px 32px; }
+              .tm__intro h3 { font-size: 22px; margin-bottom: 8px; }
+              .tm__intro p { font-size: 15px; color: var(--text-mid); margin: 0 0 14px; max-width: 58ch; }
+              .tm__meta { display: flex; gap: 32px; flex-wrap: wrap; }
+              .tm__tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.06em; color: var(--text-light); }
+              .tm__tag strong { color: var(--text); font-weight: 500; font-family: var(--sans); }
+              .tm__body { border-top: 1px solid var(--border); display: grid; grid-template-columns: 1fr 1fr; }
+              .tm__stats { padding: 24px 32px; border-right: 1px solid var(--border); }
+              .tm__stats-row { display: flex; flex-direction: column; gap: 12px; }
+              .tm__stat-item { display: flex; justify-content: space-between; align-items: baseline; font-size: 13.5px; border-bottom: 1px solid var(--border); padding-bottom: 10px; }
+              .tm__stat-item:last-child { border-bottom: none; padding-bottom: 0; }
+              .tm__stat-label { color: var(--text-mid); }
+              .tm__stat-val { font-family: var(--mono); font-size: 13px; color: var(--text); }
+              .tm__formula { background: var(--bg); padding: 24px 28px; }
+              .tm__formula .eyebrow { margin-bottom: 12px; }
+              .tm__formula pre { margin: 0; white-space: pre-wrap; font-family: var(--mono); font-size: 12.5px; line-height: 1.8; color: var(--text); }
+              .tm__formula pre .k { color: var(--navy); font-weight: 500; }
+              .tm__formula pre .c { color: var(--text-mid); }
+            </style>
+
+            <!-- 1. Road -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">01</div>
+                <div class="tm__intro">
+                  <h3>Road Transport</h3>
+                  <p>Road vehicles handle the highest volume of global passenger transit. They operate using internal combustion engines, electric drivetrains, or hybrid combinations.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Vehicles: <strong>Passenger cars, buses, HGVs, motorcycles</strong></div>
+                    <div class="tm__tag">Fuels: <strong>Petrol, diesel, electricity, LPG, CNG, biofuels</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Typical emission figures</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Average petrol car</span><span class="tm__stat-val">~7.5 L/100 km · ~170 gCO₂/km</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Battery EV (UK grid)</span><span class="tm__stat-val">~15 kWh/100 km · ~53 gCO₂/km</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Transit bus (per passenger)</span><span class="tm__stat-val">~82 gCO₂e/pkm</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">C</span> = d × f<sub>c</sub> × EF<sub>fuel</sub>
+
+<span class="c">where</span>
+  <span class="k">d</span>          = distance travelled (km)
+  <span class="k">f<sub>c</sub></span>         = fuel consumption rate (L/100 km or kWh/km)
+  <span class="k">EF<sub>fuel</sub></span>     = emission factor per unit fuel (kgCO₂e/L or kgCO₂e/kWh)</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Rail -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">02</div>
+                <div class="tm__intro">
+                  <h3>Rail Transport</h3>
+                  <p>Rail is the most energy-efficient mechanical land transport mode due to low rolling resistance between steel wheels and steel rails.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Vehicles: <strong>High-speed trains, diesel-electric, freight, subways, trams</strong></div>
+                    <div class="tm__tag">Fuels: <strong>Overhead/third-rail electricity, diesel</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Typical emission figures</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Eurostar / TGV</span><span class="tm__stat-val">~4.4 gCO₂e/pkm</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">UK national rail</span><span class="tm__stat-val">~35 gCO₂e/pkm</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Energy intensity (electric)</span><span class="tm__stat-val">&lt;50 Wh/pkm</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">E</span> = P × t × η
+
+<span class="c">where</span>
+  <span class="k">P</span>   = traction motor power output (kW)
+  <span class="k">t</span>   = time at that power level (h)
+  <span class="k">η</span>   = drivetrain efficiency (0.85–0.92 for electric rail)</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 3. Air -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">03</div>
+                <div class="tm__intro">
+                  <h3>Air Transport</h3>
+                  <p>Aviation relies on high-energy-density liquid fuels to overcome gravity and aerodynamic drag at high speed. Takeoff and climb account for a disproportionate share of short-haul fuel burn.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Vehicles: <strong>Narrowbody/widebody jets, turboprops, cargo planes</strong></div>
+                    <div class="tm__tag">Fuels: <strong>Jet A / Jet A-1 (kerosene), SAF, Avgas</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Typical emission figures</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Short-haul economy</span><span class="tm__stat-val">~151 gCO₂e/pkm</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Long-haul economy</span><span class="tm__stat-val">~148 gCO₂e/pkm</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Long-haul business</span><span class="tm__stat-val">~429 gCO₂e/pkm</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">d<sub>gc</sub></span> = 2r · arcsin(√(sin²(Δφ/2) + cos φ₁·cos φ₂·sin²(Δλ/2)))
+
+<span class="k">FC</span> = (TSFC / (L/D)) × W<sub>i</sub> × ln(W<sub>i</sub> / W<sub>f</sub>)
+
+<span class="c">where</span>
+  <span class="k">φ,λ</span>     = lat/lng of origin and destination
+  <span class="k">TSFC</span>    = thrust-specific fuel consumption of the engines
+  <span class="k">L/D</span>     = lift-to-drag ratio of the airframe
+  <span class="k">W<sub>i</sub>/W<sub>f</sub></span>  = initial/final gross weight (fuel burns during flight)</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 4. Water -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">04</div>
+                <div class="tm__intro">
+                  <h3>Water Transport</h3>
+                  <p>Maritime shipping moves approximately 80% of global trade by volume. Massive payload capacity offsets low operational speed — but fuel consumption scales cubically with velocity.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Vehicles: <strong>Container ships, bulk carriers, tankers, cruise ships, ferries</strong></div>
+                    <div class="tm__tag">Fuels: <strong>HFO, MGO, LNG, methanol, ammonia</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Characteristics</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Ferry (foot passenger)</span><span class="tm__stat-val">~19 gCO₂e/pkm</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Fuel-speed relationship</span><span class="tm__stat-val">FC ∝ v³ (cubic)</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Bulk freight efficiency</span><span class="tm__stat-val">Lowest per tonne-km of any mode</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">R<sub>T</sub></span> = C<sub>f</sub> × ½ρ<sub>w</sub> × A<sub>w</sub> × v²
+
+<span class="k">FC</span> = R<sub>T</sub> × v × SFOC / η<sub>prop</sub>
+
+<span class="c">where</span>
+  <span class="k">C<sub>f</sub></span>    = hull resistance coefficient
+  <span class="k">ρ<sub>w</sub></span>    = density of water (1,025 kg/m³ seawater)
+  <span class="k">A<sub>w</sub></span>    = wetted surface area of the hull (m²)
+  <span class="k">v</span>     = vessel speed (m/s) — note FC ∝ v³
+  <span class="k">SFOC</span>  = specific fuel oil consumption of the two-stroke engine</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 5. Pipeline -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">05</div>
+                <div class="tm__intro">
+                  <h3>Pipeline Transport</h3>
+                  <p>Pipelines are stationary, continuous systems for fluids and gases over long distances. Energy consumption depends entirely on fluid viscosity, pipe diameter, and topography.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Infrastructure: <strong>Oil pipelines, gas networks, water mains, hydrogen test lines</strong></div>
+                    <div class="tm__tag">Power: <strong>Electric pump stations, gas turbine compressors</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Key variables</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Governing equation</span><span class="tm__stat-val">Darcy-Weisbach</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Pressure loss driver</span><span class="tm__stat-val">Pipe friction, diameter, length</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Flow rate units</span><span class="tm__stat-val">m³/s</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">ΔP/L</span> = f × (ρv²) / (2D)
+
+<span class="k">P<sub>pump</sub></span> = Q × ΔP / η<sub>pump</sub>
+
+<span class="c">where</span>
+  <span class="k">f</span>       = Darcy friction factor of the pipe wall
+  <span class="k">L, D</span>    = length and internal diameter of the pipe segment (m)
+  <span class="k">ρ, v</span>    = fluid density (kg/m³) and flow velocity (m/s)
+  <span class="k">Q</span>       = volumetric flow rate (m³/s)
+  <span class="k">η<sub>pump</sub></span>  = pump or compressor efficiency</pre>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Human-powered -->
+            <div class="tm">
+              <div class="tm__head">
+                <div class="tm__num">06</div>
+                <div class="tm__intro">
+                  <h3>Human-Powered and Active Transport</h3>
+                  <p>Active transport relies on human metabolic energy from food intake. The bicycle is the planet's most energy-efficient travel mode. Above 20 km/h, aerodynamic drag becomes dominant for cycling.</p>
+                  <div class="tm__meta">
+                    <div class="tm__tag">Modes: <strong>Walking, running, road cycling, cargo biking, kick-scooters</strong></div>
+                    <div class="tm__tag">Fuel: <strong>Human metabolism (glucose, glycogen, fats)</strong></div>
+                  </div>
+                </div>
+              </div>
+              <div class="tm__body">
+                <div class="tm__stats">
+                  <div class="eyebrow" style="margin-bottom: 14px;">Typical energy figures</div>
+                  <div class="tm__stats-row">
+                    <div class="tm__stat-item"><span class="tm__stat-label">Bicycle</span><span class="tm__stat-val">~16 Wh/km (most efficient land mode)</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Walking</span><span class="tm__stat-val">~80 Wh/km</span></div>
+                    <div class="tm__stat-item"><span class="tm__stat-label">Carbon footprint</span><span class="tm__stat-val">~21 gCO₂/km (food production lifecycle)</span></div>
+                  </div>
+                </div>
+                <div class="tm__formula">
+                  <div class="eyebrow">Core calculation</div>
+<pre><span class="k">E<sub>met</sub></span> = BMR × PAL × t
+
+<span class="k">P<sub>cycle</sub></span> = C<sub>r</sub>·m·g·v + ½ρ<sub>air</sub>·C<sub>d</sub>·A·v³
+
+<span class="c">where</span>
+  <span class="k">BMR</span>    = basal metabolic rate of the individual (W)
+  <span class="k">PAL</span>    = physical activity level multiplier
+  <span class="k">C<sub>r</sub></span>     = rolling resistance coefficient
+  <span class="k">C<sub>d</sub>·A</span>  = aerodynamic drag area (dominant above ~20 km/h)
+  <span class="k">ρ<sub>air</sub></span>  = air density (1.225 kg/m³ at sea level)</pre>
+                </div>
+              </div>
+            </div>
+
           </div>
 
           <!-- Factor table -->
