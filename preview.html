@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Try the preview - ClariComp</title>
+  <meta name="description" content="Upload last year's travel spreadsheet. ClariComp returns a carbon preview in the browser. No login. No sales call." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <div class="hero__eyebrow"><span class="dot"></span>Self-serve · no login · last-year data only</div>
+      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">Upload your spreadsheet. See your preview.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">CSV or XLSX, any column order. ClariComp validates headers, computes missing distances, and returns a tender-readiness assessment - in the browser, in minutes.</p>
+    </div>
+  </section>
+
+  <section class="section section--first" style="padding-top: 24px;">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start;">
+
+        <!-- Upload form -->
+        <form id="upload-form" onsubmit="event.preventDefault(); startProcessing();" style="display:flex; flex-direction: column; gap: 20px;">
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="field"><label for="co">Company name <span style="text-transform:none; letter-spacing: 0; color: var(--text-light);">(optional)</span></label><input id="co" type="text" placeholder="Northgate Manufacturing Ltd" /></div>
+            <div class="field"><label for="email">Email <span style="color: var(--text-light); text-transform:none; letter-spacing: 0;">· to send preview</span></label><input id="email" type="email" required placeholder="finance@yourcompany.co.uk" /></div>
+          </div>
+
+          <div class="field">
+            <label for="year">Reporting year</label>
+            <select id="year">
+              <option value="2024-25" selected>FY 2024 - 25 (last year)</option>
+              <option value="2023-24">FY 2023 - 24</option>
+            </select>
+          </div>
+
+          <!-- Dropzone -->
+          <div id="dropzone" class="dropzone" style="margin-top: 8px;">
+            <div class="dropzone__icon" id="dz-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#203848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+            </div>
+            <h3 class="dropzone__title" id="dz-title">Drop your travel CSV</h3>
+            <p class="dropzone__sub" id="dz-sub">Any column order. ClariComp will match your headers in the next step.</p>
+            <button type="button" class="btn btn--primary" onclick="document.getElementById('file').click()">Browse files</button>
+            <input id="file" type="file" accept=".csv,.xlsx" hidden onchange="onFile(this.files[0])" />
+            <div class="dropzone__meta">.CSV · .XLSX · up to 50 MB</div>
+          </div>
+
+          <!-- States stack -->
+          <div id="states" style="display:flex; flex-direction: column; gap: 10px;"></div>
+
+          <!-- Submit -->
+          <div id="submit-row" style="display:flex; gap: 12px; align-items: center; margin-top: 8px;" hidden>
+            <button type="submit" class="btn btn--primary btn--lg" id="submit-btn">Generate my preview</button>
+            <a href="#" onclick="event.preventDefault(); resetForm();" style="font-family: var(--mono); font-size: 12px; color: var(--text-mid); letter-spacing: 0.04em;">Start over</a>
+          </div>
+
+          <!-- Demo state buttons -->
+          <div style="margin-top: 24px; padding: 16px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);">
+            <div class="eyebrow" style="margin-bottom: 10px;">Try a validation state · demo</div>
+            <div style="display:flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('ok')">Valid file</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('warn')">Partial data</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('err')">Invalid file</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('current')">Current-year data</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Auto-detected columns + template -->
+        <aside style="display:flex; flex-direction: column; gap: 16px; position: sticky; top: 96px;">
+          <div class="card" style="padding: 24px 28px;">
+            <div class="eyebrow" style="margin-bottom: 16px;">Auto-detected columns</div>
+            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+              <tbody id="cols-body">
+                <tr><td style="padding: 10px 0; color: var(--text-mid);">Drop a file to see column matching.</td></tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div class="card" style="padding: 24px 28px; background: var(--white); border-color: var(--border);">
+            <div class="eyebrow" style="margin-bottom: 12px;">Need a starting point?</div>
+            <h4 style="font-size: 17px; margin-bottom: 8px;">Download the template</h4>
+            <p style="font-size: 14px; color: var(--text-mid); margin-bottom: 16px;">XLSX with the five required columns and ten example trips. Use it as the format reference for your own export.</p>
+            <a href="#" class="btn btn--ghost" style="padding: 9px 16px; font-size: 13.5px;" onclick="event.preventDefault(); alert('Template download placeholder - wire to file.');">Download template (.xlsx)</a>
+          </div>
+
+          <div style="padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-lg); font-size: 13px; color: var(--text-mid); background: rgba(255,255,255,0.5);">
+            <div class="eyebrow" style="margin-bottom: 8px;">Why last-year data only?</div>
+            A complete reporting period gives an honest annual total. Partial-year data inflates per-row averages and produces a preview you can't sign. <a href="methodology.html" style="color: var(--navy); text-decoration: underline;">More on methodology</a>.
+          </div>
+        </aside>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+
+  <script>
+    // ─── Preview-upload demo logic ───────────────────────────────────────
+    // Real processing would happen server-side. This is a faithful
+    // visualisation of the validation flow described in the brief.
+
+    function el(id) { return document.getElementById(id); }
+
+    function setColumns(rows) {
+      const tbody = el('cols-body');
+      tbody.innerHTML = rows.map(r => `
+        <tr style="border-top: 1px solid var(--border);">
+          <td style="padding: 12px 0; width: 36%;">${r.from}</td>
+          <td style="padding: 12px 0; font-family: var(--mono); font-size: 13px; color: var(--text-mid);">→ ${r.to}</td>
+          <td style="padding: 12px 0; text-align: right; color: ${r.ok ? '#2f7a52' : '#a07024'};">${r.ok ? '✓' : '△'}</td>
+        </tr>
+      `).join('');
+    }
+
+    function clearStates() { el('states').innerHTML = ''; el('submit-row').hidden = true; }
+
+    function pushState(kind, title, body) {
+      const cls = kind === 'ok' ? 'state--ok' : kind === 'warn' ? 'state--warn' : 'state--err';
+      el('states').insertAdjacentHTML('beforeend', `
+        <div class="state ${cls}"><span class="state__dot"></span>
+          <div><div class="state__title">${title}</div><div class="state__body">${body}</div></div>
+        </div>`);
+    }
+
+    function setDropzone(title, sub) {
+      el('dz-title').textContent = title;
+      el('dz-sub').textContent = sub;
+    }
+
+    function onFile(file) {
+      if (!file) return;
+      // Naive client-side detection
+      const ok = /\.(csv|xlsx)$/i.test(file.name);
+      if (!ok) { demoState('err'); return; }
+      setDropzone(file.name, (file.size/1024).toFixed(0) + ' KB · ready to validate');
+      demoState('ok');
+    }
+
+    function demoState(kind) {
+      clearStates();
+      if (kind === 'ok') {
+        setColumns([
+          { from: 'Date',        to: 'trip_date',      ok: true },
+          { from: 'Employee',    to: 'user_name',      ok: true },
+          { from: 'Origin',      to: 'from_address',   ok: true },
+          { from: 'Destination', to: 'to_address',     ok: true },
+          { from: 'Mode',        to: 'transport_mode', ok: true },
+          { from: 'Distance',    to: '- (will compute)', ok: false },
+        ]);
+        pushState('ok', 'Your file looks good. Processing your preview.',
+          'File type valid · reporting year FY 2024-25 detected · 312 rows ready · 6/6 required columns matched.');
+        el('submit-row').hidden = false;
+      }
+      else if (kind === 'warn') {
+        setColumns([
+          { from: 'Date',        to: 'trip_date',      ok: true },
+          { from: 'Employee',    to: 'user_name',      ok: true },
+          { from: 'Origin',      to: 'from_address',   ok: true },
+          { from: 'Destination', to: 'to_address',     ok: false },
+          { from: 'Mode',        to: 'transport_mode', ok: true },
+          { from: 'Distance',    to: '-',              ok: false },
+        ]);
+        pushState('warn', 'Some data is missing. Your preview will be partial.',
+          '8 of 312 rows are missing a destination. ClariComp will skip these rows in the preview and flag them in the output. Download the template to see the required format.');
+        el('submit-row').hidden = false;
+      }
+      else if (kind === 'err') {
+        setColumns([
+          { from: 'Date',  to: '-', ok: false },
+          { from: 'Notes', to: '-', ok: false },
+          { from: 'Cost',  to: '-', ok: false },
+        ]);
+        pushState('err', 'This file cannot be processed.',
+          'No recognisable trip columns found. The file looks like an expense reimbursement export, not a travel log. Download our template to start again.');
+      }
+      else if (kind === 'current') {
+        setColumns([
+          { from: 'Date',        to: 'trip_date',      ok: true },
+          { from: 'Employee',    to: 'user_name',      ok: true },
+          { from: 'Origin',      to: 'from_address',   ok: true },
+          { from: 'Destination', to: 'to_address',     ok: true },
+          { from: 'Mode',        to: 'transport_mode', ok: true },
+        ]);
+        pushState('err', 'Current-year data - ClariComp only accepts last-year files.',
+          'Detected reporting year FY 2025-26. ClariComp only accepts data from the previous financial year to ensure your preview reflects a complete reporting period. Please upload data from the previous financial year.');
+      }
+    }
+
+    function startProcessing() {
+      // Real submission would POST to the server here.
+      window.location.href = 'results.html';
+    }
+
+    function resetForm() {
+      clearStates();
+      setColumns([{ from: 'Drop a file to see column matching.', to: '', ok: true }]);
+      el('cols-body').innerHTML = `<tr><td style="padding: 10px 0; color: var(--text-mid);">Drop a file to see column matching.</td></tr>`;
+      setDropzone('Drop your travel CSV', "Any column order. ClariComp will match your headers in the next step.");
+      el('upload-form').reset();
+    }
+
+    // Drag-drop visual cue
+    const dz = el('dropzone');
+    ['dragover', 'dragenter'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = 'var(--navy)'; }));
+    ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = ''; }));
+    dz.addEventListener('drop', ev => {
+      const f = ev.dataTransfer && ev.dataTransfer.files[0];
+      if (f) onFile(f);
+    });
+  </script>
+</body>
+</html>

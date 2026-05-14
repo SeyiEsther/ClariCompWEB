@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Preview results - ClariComp</title>
+  <meta name="description" content="Your carbon preview: total tCO₂e, mode breakdown, top hotspots, data quality and tender readiness." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <!-- Banner -->
+  <div style="background: rgba(168,121,46,0.08); border-bottom: 1px solid rgba(168,121,46,0.18);">
+    <div class="container" style="padding-top: 12px; padding-bottom: 12px; display:flex; gap: 12px; align-items: center; font-size: 13px;">
+      <span style="width: 6px; height: 6px; border-radius: 50%; background: #c08a2f; display:inline-block;"></span>
+      <span style="color: var(--text); font-family: var(--mono); font-size: 11.5px; letter-spacing: 0.1em; text-transform: uppercase;">Indicative preview · not the final audited report</span>
+      <span style="margin-left: auto; color: var(--text-mid);">Compliance Pro turns this into a signed PPN 06/21 plan · <a href="pricing.html" style="text-decoration: underline; color: var(--navy);">£450/mo</a></span>
+    </div>
+  </div>
+
+  <section class="hero" style="padding: 56px 0 32px;">
+    <div class="container">
+      <div style="display:flex; justify-content:space-between; align-items: flex-end; flex-wrap: wrap; gap: 24px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">Preview · Northgate Manufacturing Ltd · FY 2024-25</div>
+          <h1 style="font-size: 48px; line-height: 1.05; max-width: 22ch; margin-bottom: 8px;">Your Scope 3 Category 6 carbon preview.</h1>
+          <p style="color: var(--text-mid); margin: 0;">Generated 14 Apr 2026 · DEFRA 2025 factor set · 312 trips processed</p>
+        </div>
+        <div style="display:flex; gap: 12px;">
+          <a href="sample-report.html" class="btn btn--ghost">Download preview PDF</a>
+          <a href="pricing.html" class="btn btn--primary">Upgrade to Compliance Pro</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- KPIs -->
+  <section class="section section--first" style="padding-top: 24px;">
+    <div class="container">
+      <div class="grid-4" style="gap: 16px;">
+        <div class="kpi">
+          <div class="kpi__label">Total emissions</div>
+          <div class="kpi__value">47.218</div>
+          <div class="kpi__sub" style="display:flex; gap: 8px; align-items: center;">
+            <span class="mono" style="font-size: 11px; color: #a07024; letter-spacing: 0.04em;">↑ 12.4% vs FY 23-24</span>
+            <span style="color: var(--text-light); font-family: var(--mono); font-size: 11px;">tCO₂e</span>
+          </div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__label">Trips processed</div>
+          <div class="kpi__value">312</div>
+          <div class="kpi__sub">Across 47 unique employees</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__label">Confidence</div>
+          <div class="kpi__value">98.7%</div>
+          <div class="kpi__sub">Weighted by emission magnitude</div>
+        </div>
+        <div class="kpi">
+          <div class="kpi__label">Tender readiness</div>
+          <div class="kpi__value" style="display:flex; align-items: center; gap: 12px;">
+            Pass
+            <span class="tag tag--ok" style="font-size: 9px; padding: 2px 8px;">PPN-READY</span>
+          </div>
+          <div class="kpi__sub">All four artefacts can be produced</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Breakdown + hotspots -->
+  <section class="section">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: 1.2fr 1fr; gap: 32px;">
+
+        <!-- Mode breakdown -->
+        <div class="card" style="padding: 28px 32px;">
+          <div style="display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 24px;">
+            <div>
+              <div class="eyebrow" style="margin-bottom: 8px;">Emissions by mode</div>
+              <h3 style="font-size: 22px; margin: 0;">Where the tonnes come from.</h3>
+            </div>
+            <div style="font-family: var(--mono); font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">FY 2024-25</div>
+          </div>
+
+          <!-- Stacked bar -->
+          <div style="display:flex; height: 32px; border-radius: 4px; overflow: hidden; margin-bottom: 28px; border: 1px solid var(--border);">
+            <div style="background: #203848; flex: 21.488;"></div>
+            <div style="background: #546C7B; flex: 5.642;"></div>
+            <div style="background: #95A7B3; flex: 2.180;"></div>
+            <div style="background: #CBD8E2; flex: 3.162;"></div>
+            <div style="background: #E3EDF5; flex: 0.328;"></div>
+          </div>
+
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
+            <thead>
+              <tr style="text-align: left;">
+                <th style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 400;">Mode</th>
+                <th class="num" style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 400; text-align: right;">Trips</th>
+                <th class="num" style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 400; text-align: right;">km</th>
+                <th class="num" style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 400; text-align: right;">tCO₂e</th>
+                <th class="num" style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase; color: var(--text-light); padding-bottom: 10px; border-bottom: 1px solid var(--border); font-weight: 400; text-align: right;">Share</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr><td style="padding: 12px 0; border-bottom: 1px solid var(--border); display:flex; align-items:center; gap: 10px;"><span style="width:8px; height:8px; background: #203848; border-radius:2px;"></span>Air - short-haul</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">44</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">33,210</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">21.488</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono); color: var(--text-mid);">45.5%</td></tr>
+              <tr><td style="padding: 12px 0; border-bottom: 1px solid var(--border); display:flex; align-items:center; gap: 10px;"><span style="width:8px; height:8px; background: #546C7B; border-radius:2px;"></span>Air - domestic</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">18</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">8,442</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">5.642</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono); color: var(--text-mid);">12.0%</td></tr>
+              <tr><td style="padding: 12px 0; border-bottom: 1px solid var(--border); display:flex; align-items:center; gap: 10px;"><span style="width:8px; height:8px; background: #95A7B3; border-radius:2px;"></span>Rail</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">186</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">61,408</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">2.180</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono); color: var(--text-mid);">4.6%</td></tr>
+              <tr><td style="padding: 12px 0; border-bottom: 1px solid var(--border); display:flex; align-items:center; gap: 10px;"><span style="width:8px; height:8px; background: #CBD8E2; border-radius:2px;"></span>Car - private</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">52</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">18,772</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">3.162</td><td style="padding: 12px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono); color: var(--text-mid);">6.7%</td></tr>
+              <tr><td style="padding: 12px 0; display:flex; align-items:center; gap: 10px;"><span style="width:8px; height:8px; background: #E3EDF5; border:1px solid var(--border); border-radius:2px;"></span>Taxi &amp; rideshare</td><td style="padding: 12px 0; text-align:right; font-family: var(--mono);">12</td><td style="padding: 12px 0; text-align:right; font-family: var(--mono);">2,118</td><td style="padding: 12px 0; text-align:right; font-family: var(--mono);">0.328</td><td style="padding: 12px 0; text-align:right; font-family: var(--mono); color: var(--text-mid);">0.7%</td></tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Tender readiness -->
+        <div class="card" style="padding: 28px 32px; background: var(--navy); color: var(--white); border-color: var(--navy);">
+          <div class="eyebrow" style="color: var(--blue-light); margin-bottom: 14px;">Tender readiness assessment</div>
+          <h3 style="color: var(--white); font-size: 22px; margin: 0 0 22px;">PPN 06/21 - pass.</h3>
+
+          <div style="display:flex; flex-direction: column; gap: 12px;">
+            <div style="display:flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(227,237,245,0.14); font-size: 14px;">
+              <span style="color: var(--blue-light);">Methodology statement</span>
+              <span class="mono" style="color: #8fd3a8;">✓ READY</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(227,237,245,0.14); font-size: 14px;">
+              <span style="color: var(--blue-light);">Formula trail (312 rows)</span>
+              <span class="mono" style="color: #8fd3a8;">✓ READY</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(227,237,245,0.14); font-size: 14px;">
+              <span style="color: var(--blue-light);">DEFRA 2025 factor stamp</span>
+              <span class="mono" style="color: #8fd3a8;">✓ READY</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; padding-bottom: 12px; border-bottom: 1px solid rgba(227,237,245,0.14); font-size: 14px;">
+              <span style="color: var(--blue-light);">Public verification URL</span>
+              <span class="mono" style="color: #95A7B3;">on Pro</span>
+            </div>
+            <div style="display:flex; justify-content: space-between; font-size: 14px;">
+              <span style="color: var(--blue-light);">Director signature block</span>
+              <span class="mono" style="color: #95A7B3;">on Pro</span>
+            </div>
+          </div>
+
+          <a href="pricing.html" class="btn" style="background: var(--white); color: var(--navy); margin-top: 28px;">Turn this into the full report →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Hotspots -->
+  <section class="section section--mute">
+    <div class="container">
+      <div class="row-split" style="margin-bottom: 32px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">Top hotspots</div>
+          <h2>Five rows that produced one-third of your total.</h2>
+        </div>
+        <p class="lede" style="margin-top: 10px;">If you wanted to cut emissions next year, these are where you'd start. Routes, travellers and frequency - ranked by tCO₂e contribution.</p>
+      </div>
+
+      <table class="tbl">
+        <thead>
+          <tr>
+            <th>Rank</th>
+            <th>Route</th>
+            <th>Mode · class</th>
+            <th class="num">Trips</th>
+            <th class="num">tCO₂e</th>
+            <th class="num">% of total</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="mono" style="font-size: 12px; color: var(--text-light);">01</td><td>London (LHR) ↔ Frankfurt (FRA)</td><td>Air · short-haul · economy</td><td class="num">14</td><td class="num">5.812</td><td class="num">12.3%</td></tr>
+          <tr><td class="mono" style="font-size: 12px; color: var(--text-light);">02</td><td>London (LHR) ↔ Dublin (DUB)</td><td>Air · short-haul · economy</td><td class="num">22</td><td class="num">3.106</td><td class="num">6.6%</td></tr>
+          <tr><td class="mono" style="font-size: 12px; color: var(--text-light);">03</td><td>Birmingham ↔ Edinburgh</td><td>Air · domestic</td><td class="num">9</td><td class="num">2.219</td><td class="num">4.7%</td></tr>
+          <tr><td class="mono" style="font-size: 12px; color: var(--text-light);">04</td><td>Manchester ↔ Munich (MUC)</td><td>Air · short-haul · economy</td><td class="num">8</td><td class="num">1.984</td><td class="num">4.2%</td></tr>
+          <tr><td class="mono" style="font-size: 12px; color: var(--text-light);">05</td><td>Reading ↔ Edinburgh</td><td>Car · diesel</td><td class="num">11</td><td class="num">1.302</td><td class="num">2.8%</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Methodology / factor-set badge -->
+  <section class="section">
+    <div class="container">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 32px;">
+        <div class="card" style="padding: 28px 32px;">
+          <div class="eyebrow" style="margin-bottom: 12px;">Data quality</div>
+          <h3 style="font-size: 22px; margin: 0 0 18px;">Where the missing 1.3% sits.</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+            <li style="display:flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);"><span>4 rows · aircraft class inferred as economy</span><span class="mono" style="color: var(--text-mid);">-0.6%</span></li>
+            <li style="display:flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);"><span>2 rows · destination resolved to city centroid</span><span class="mono" style="color: var(--text-mid);">-0.4%</span></li>
+            <li style="display:flex; justify-content: space-between;"><span>1 row · car fuel type defaulted to unknown</span><span class="mono" style="color: var(--text-mid);">-0.3%</span></li>
+          </ul>
+        </div>
+        <div class="card" style="padding: 28px 32px;">
+          <div class="eyebrow" style="margin-bottom: 12px;">Calculation basis</div>
+          <h3 style="font-size: 22px; margin: 0 0 18px;">The stamps on this report.</h3>
+          <ul style="list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 10px; font-size: 14px;">
+            <li style="display:flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);"><span>Factor set</span><span class="mono" style="color: var(--text);">DEFRA 2025 · v2025.1</span></li>
+            <li style="display:flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);"><span>Aviation distance</span><span class="mono" style="color: var(--text);">Haversine GC</span></li>
+            <li style="display:flex; justify-content: space-between; padding-bottom: 10px; border-bottom: 1px solid var(--border);"><span>Ground distance</span><span class="mono" style="color: var(--text);">Distance Matrix</span></li>
+            <li style="display:flex; justify-content: space-between;"><span>Precision</span><span class="mono" style="color: var(--text);">6 dp</span></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Upgrade -->
+  <section class="section section--dark">
+    <div class="container" style="text-align: center;">
+      <h2 style="font-size: 44px; max-width: 22ch; margin: 0 auto 14px;">Turn this into a full audit-ready report.</h2>
+      <p style="font-size: 17px; color: var(--blue-light); max-width: 56ch; margin: 0 auto 28px;">Compliance Pro from £450/month. Same numbers, same factor set, signed and verifiable.</p>
+      <div style="display:flex; gap: 12px; justify-content: center;">
+        <a href="pricing.html" class="btn btn--lg" style="background: var(--white); color: var(--navy);">See Compliance Pro</a>
+        <a href="sample-report.html" class="btn btn--lg" style="background: transparent; color: var(--white); border: 1px solid rgba(227,237,245,0.3);">View a sample report</a>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

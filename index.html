@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>ClariComp - Audit-ready carbon reporting for SECR and PPN 06/21</title>
+  <meta name="description" content="Upload last year's business travel data. Get a tender-ready carbon preview with a formula trail your auditor can verify. Built for UK manufacturers and contractors." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+  <div id="nav"></div>
+
+  <!-- ───────────────── Hero ───────────────── -->
+  <section class="hero hero--landing">
+    <div class="container">
+      <div class="hero__eyebrow hero__eyebrow--pill">
+        <span class="dot"></span>
+        Now in beta · DEFRA 2025 · Scope 3.6
+      </div>
+      <h1 class="display-h1">Start continuous, <em>audit-ready</em> carbon logging.</h1>
+      <p class="hero__lede">Built for UK manufacturers and contractors filing under SECR and bidding on PPN 06/21 contracts. Every trip carries its formula trail - every report carries the auditor's answer.</p>
+      <div class="hero__ctas">
+        <a href="preview.html" class="btn btn--primary btn--lg">Try the preview</a>
+        <a href="#signup" class="btn btn--ghost btn--lg">Sign up</a>
+        <a href="guides.html" style="font-family: var(--mono); font-size: 12.5px; letter-spacing: 0.06em; color: var(--text-mid); margin-left: 6px; text-transform: uppercase; align-self: center;">or read the guides →</a>
+      </div>
+
+      <!-- Hero mock: 3-tab product switcher (Dashboard · CSV upload · One-click PDF) -->
+      <div style="margin-top: 56px;">
+        <!-- Tab switcher -->
+        <div style="display:flex; justify-content: center; margin-bottom: 28px;">
+          <div role="tablist" id="hero-tabs" style="display:inline-flex; background: var(--card); border: 1px solid var(--border); padding: 4px; border-radius: 99px; gap: 2px;">
+            <button class="hero-tab is-active" data-tab="dash" type="button" style="background: var(--navy); color: var(--white); border: 0; padding: 9px 22px; border-radius: 99px; font-family: var(--sans); font-size: 13.5px; font-weight: 500; cursor: pointer; letter-spacing: -0.005em;">Dashboard</button>
+            <button class="hero-tab" data-tab="csv" type="button" style="background: transparent; color: var(--text-mid); border: 0; padding: 9px 22px; border-radius: 99px; font-family: var(--sans); font-size: 13.5px; font-weight: 500; cursor: pointer; letter-spacing: -0.005em;">CSV upload</button>
+            <button class="hero-tab" data-tab="pdf" type="button" style="background: transparent; color: var(--text-mid); border: 0; padding: 9px 22px; border-radius: 99px; font-family: var(--sans); font-size: 13.5px; font-weight: 500; cursor: pointer; letter-spacing: -0.005em;">One-click PDF</button>
+          </div>
+        </div>
+
+        <!-- Window frame -->
+        <div style="background: var(--card); border: 1px solid var(--border); border-radius: 14px; overflow: hidden; box-shadow: 0 30px 70px -32px rgba(32,56,72,0.25);">
+          <!-- Title bar -->
+          <div style="display:flex; align-items:center; gap: 12px; padding: 12px 18px; background: rgba(240,245,249,0.6); border-bottom: 1px solid var(--border); font-family: var(--mono); font-size: 11px; color: var(--text-mid); letter-spacing: 0.04em;">
+            <div style="display:flex; gap: 6px;">
+              <span style="width:10px; height:10px; border-radius:50%; background: rgba(32,56,72,0.18);"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background: rgba(32,56,72,0.12);"></span>
+              <span style="width:10px; height:10px; border-radius:50%; background: rgba(32,56,72,0.08);"></span>
+            </div>
+            <span id="hero-url" style="margin-left: 8px;">claricomp.app / dashboard</span>
+            <span id="hero-badge" style="margin-left: auto; display:inline-flex; align-items:center; gap: 6px; padding: 3px 10px; border-radius: 99px; background: rgba(143,211,168,0.15); color: #2f7a52; font-size: 10px; letter-spacing: 0.12em; text-transform: uppercase;"><span style="width: 5px; height: 5px; border-radius: 50%; background: #2f7a52;"></span><span id="hero-badge-text">FY 25 LIVE</span></span>
+          </div>
+
+          <!-- Tab panels -->
+          <div id="hero-panels">
+            <!-- ── Dashboard ── -->
+            <div class="hero-panel" data-panel="dash" style="display: grid; grid-template-columns: 220px 1fr;">
+              <aside style="background: var(--bg); border-right: 1px solid var(--border); padding: 24px 20px; min-height: 520px;">
+                <div style="display:flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--card); border: 1px solid var(--border); border-radius: 6px; margin-bottom: 20px;">
+                  <div style="width: 26px; height: 26px; background: var(--navy); border-radius: 5px; color: var(--white); font-family: var(--serif); font-size: 14px; display:flex; align-items:center; justify-content:center;">N</div>
+                  <div style="font-size: 13.5px; font-weight: 500;">Northgate Mfg.</div>
+                </div>
+                <nav style="display:flex; flex-direction: column; gap: 2px; font-size: 13.5px;">
+                  <a href="#" style="padding: 8px 10px; background: var(--white); border-radius: 5px; color: var(--text);">Dashboard</a>
+                  <a href="#" style="padding: 8px 10px; color: var(--text-mid);">Trips</a>
+                  <a href="#" style="padding: 8px 10px; color: var(--text-mid);">Imports</a>
+                  <a href="#" style="padding: 8px 10px; color: var(--text-mid);">Factors</a>
+                  <a href="#" style="padding: 8px 10px; color: var(--text-mid);">Reports</a>
+                  <a href="#" style="padding: 8px 10px; color: var(--text-mid);">Audit log</a>
+                </nav>
+                <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid var(--border);">
+                  <div class="eyebrow" style="margin-bottom: 10px;">Factor set</div>
+                  <div style="display:flex; align-items:center; gap: 8px; font-size: 13px; font-weight: 500;"><span style="width:7px; height:7px; border-radius: 50%; background: #2f7a52;"></span>DEFRA 2025</div>
+                  <div style="font-size: 12px; color: var(--text-light); font-family: var(--mono); margin-top: 4px;">v2025.1 · 12 Apr</div>
+                </div>
+              </aside>
+
+              <div style="padding: 28px 32px;">
+                <div style="display:flex; justify-content: space-between; align-items: flex-end; margin-bottom: 22px;">
+                  <div>
+                    <div class="eyebrow" style="margin-bottom: 6px;">Business travel · Scope 3.6</div>
+                    <div style="font-family: var(--serif); font-size: 28px; line-height: 1;">Year to date</div>
+                  </div>
+                  <div style="display:flex; gap: 8px;">
+                    <div style="padding: 6px 14px; border: 1px solid var(--border); border-radius: 99px; font-size: 12.5px; color: var(--text);">FY 2024-25 ▾</div>
+                    <div style="padding: 6px 14px; border: 1px solid var(--border); border-radius: 99px; font-size: 12.5px; color: var(--text);">All sites ▾</div>
+                  </div>
+                </div>
+
+                <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 14px; margin-bottom: 20px;">
+                  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px;">
+                    <div class="eyebrow" style="margin-bottom: 10px;">tCO₂e</div>
+                    <div style="font-family: var(--serif); font-size: 36px; line-height: 1; letter-spacing: -0.02em;">47.218</div>
+                    <div style="margin-top: 8px; font-size: 12px; color: #a07024; font-family: var(--mono);">↑ 12.4% vs FY24</div>
+                  </div>
+                  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px;">
+                    <div class="eyebrow" style="margin-bottom: 10px;">Trips</div>
+                    <div style="font-family: var(--serif); font-size: 36px; line-height: 1; letter-spacing: -0.02em;">312</div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--text-mid);">Logged this year</div>
+                  </div>
+                  <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 18px 20px;">
+                    <div class="eyebrow" style="margin-bottom: 10px;">Confidence</div>
+                    <div style="font-family: var(--serif); font-size: 36px; line-height: 1; letter-spacing: -0.02em;">98.7%</div>
+                    <div style="margin-top: 8px; font-size: 12px; color: var(--text-mid);">Verified entries</div>
+                  </div>
+                </div>
+
+                <!-- Chart -->
+                <div style="background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 22px 22px 14px;">
+                  <div style="display:flex; justify-content:space-between; align-items: center; margin-bottom: 14px;">
+                    <div style="font-size: 13.5px; font-weight: 500;">Emissions by mode · monthly</div>
+                    <div style="display:flex; gap: 14px; font-family: var(--mono); font-size: 11px; color: var(--text-mid); letter-spacing: 0.04em;">
+                      <span style="display:inline-flex; align-items:center; gap: 6px;"><span style="width:8px; height:8px; background: #203848; border-radius: 2px;"></span>Flight</span>
+                      <span style="display:inline-flex; align-items:center; gap: 6px;"><span style="width:8px; height:8px; background: #95A7B3; border-radius: 2px;"></span>Car</span>
+                      <span style="display:inline-flex; align-items:center; gap: 6px;"><span style="width:8px; height:8px; background: #CBD8E2; border-radius: 2px;"></span>Rail</span>
+                    </div>
+                  </div>
+                  <svg viewBox="0 0 600 180" style="width:100%; height: 180px; display: block;" preserveAspectRatio="none">
+                    <!-- gridlines -->
+                    <g stroke="rgba(32,56,72,0.06)" stroke-width="1">
+                      <line x1="0" y1="40"  x2="600" y2="40"/>
+                      <line x1="0" y1="80"  x2="600" y2="80"/>
+                      <line x1="0" y1="120" x2="600" y2="120"/>
+                      <line x1="0" y1="160" x2="600" y2="160"/>
+                    </g>
+                    <!-- stacked bars: 12 months -->
+                    <g>
+                      <!-- helper: each month bar is at x=col*50+12, width 26 -->
+                      <!-- Flight (navy), Car (mid), Rail (blue-light), stacked from bottom y=160 -->
+                      <!-- Month 1 -->
+                      <rect x="12"  y="116" width="26" height="44" fill="#203848"/>
+                      <rect x="12"  y="138" width="26" height="22" fill="#95A7B3" y="100"/>
+                      <rect x="12"  y="92"  width="26" height="24" fill="#203848" opacity="0"/>
+                      <!-- Use simpler explicit pre-computed bars for clarity -->
+                    </g>
+                    <!-- Cleaner explicit set of stacked bars -->
+                    <g>
+                      <!-- Apr -->
+                      <rect x="14"  y="110" width="26" height="36" fill="#203848"/>
+                      <rect x="14"  y="146" width="26" height="10" fill="#95A7B3"/>
+                      <rect x="14"  y="156" width="26" height="4"  fill="#CBD8E2"/>
+                      <!-- May -->
+                      <rect x="64"  y="86"  width="26" height="60" fill="#203848"/>
+                      <rect x="64"  y="146" width="26" height="9"  fill="#95A7B3"/>
+                      <rect x="64"  y="155" width="26" height="5"  fill="#CBD8E2"/>
+                      <!-- Jun -->
+                      <rect x="114" y="92"  width="26" height="54" fill="#203848"/>
+                      <rect x="114" y="146" width="26" height="11" fill="#95A7B3"/>
+                      <rect x="114" y="157" width="26" height="3"  fill="#CBD8E2"/>
+                      <!-- Jul -->
+                      <rect x="164" y="64"  width="26" height="82" fill="#203848"/>
+                      <rect x="164" y="146" width="26" height="9"  fill="#95A7B3"/>
+                      <rect x="164" y="155" width="26" height="5"  fill="#CBD8E2"/>
+                      <!-- Aug -->
+                      <rect x="214" y="76"  width="26" height="70" fill="#203848"/>
+                      <rect x="214" y="146" width="26" height="8"  fill="#95A7B3"/>
+                      <rect x="214" y="154" width="26" height="6"  fill="#CBD8E2"/>
+                      <!-- Sep -->
+                      <rect x="264" y="58"  width="26" height="88" fill="#203848"/>
+                      <rect x="264" y="146" width="26" height="10" fill="#95A7B3"/>
+                      <rect x="264" y="156" width="26" height="4"  fill="#CBD8E2"/>
+                      <!-- Oct -->
+                      <rect x="314" y="92"  width="26" height="54" fill="#203848"/>
+                      <rect x="314" y="146" width="26" height="9"  fill="#95A7B3"/>
+                      <rect x="314" y="155" width="26" height="5"  fill="#CBD8E2"/>
+                      <!-- Nov -->
+                      <rect x="364" y="100" width="26" height="46" fill="#203848"/>
+                      <rect x="364" y="146" width="26" height="8"  fill="#95A7B3"/>
+                      <rect x="364" y="154" width="26" height="6"  fill="#CBD8E2"/>
+                      <!-- Dec -->
+                      <rect x="414" y="118" width="26" height="28" fill="#203848"/>
+                      <rect x="414" y="146" width="26" height="6"  fill="#95A7B3"/>
+                      <rect x="414" y="152" width="26" height="8"  fill="#CBD8E2"/>
+                      <!-- Jan -->
+                      <rect x="464" y="104" width="26" height="42" fill="#203848"/>
+                      <rect x="464" y="146" width="26" height="9"  fill="#95A7B3"/>
+                      <rect x="464" y="155" width="26" height="5"  fill="#CBD8E2"/>
+                      <!-- Feb -->
+                      <rect x="514" y="88"  width="26" height="58" fill="#203848"/>
+                      <rect x="514" y="146" width="26" height="10" fill="#95A7B3"/>
+                      <rect x="514" y="156" width="26" height="4"  fill="#CBD8E2"/>
+                      <!-- Mar -->
+                      <rect x="564" y="70"  width="26" height="76" fill="#203848"/>
+                      <rect x="564" y="146" width="26" height="10" fill="#95A7B3"/>
+                      <rect x="564" y="156" width="26" height="4"  fill="#CBD8E2"/>
+                    </g>
+                    <!-- baseline -->
+                    <line x1="0" y1="160" x2="600" y2="160" stroke="rgba(32,56,72,0.18)" stroke-width="1"/>
+                  </svg>
+                  <div style="display:flex; justify-content: space-between; font-family: var(--mono); font-size: 10.5px; color: var(--text-light); margin-top: 6px; letter-spacing: 0.04em;">
+                    <span>Apr</span><span>May</span><span>Jun</span><span>Jul</span><span>Aug</span><span>Sep</span><span>Oct</span><span>Nov</span><span>Dec</span><span>Jan</span><span>Feb</span><span>Mar</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── CSV upload ── -->
+            <div class="hero-panel" data-panel="csv" style="display: none; padding: 32px; min-height: 520px;">
+              <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                <!-- dropzone -->
+                <div style="border: 1.5px dashed var(--border-strong); border-radius: 10px; background: var(--bg); padding: 56px 24px; text-align: center; display:flex; flex-direction: column; align-items: center; justify-content: center;">
+                  <div style="width: 44px; height: 44px; background: var(--card); border: 1px solid var(--border); border-radius: 50%; display:flex; align-items:center; justify-content:center; margin-bottom: 16px;">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#203848" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+                  </div>
+                  <div style="font-family: var(--serif); font-size: 24px; line-height: 1.2; margin-bottom: 8px;">Drop your travel CSV</div>
+                  <p style="color: var(--text-mid); font-size: 13.5px; max-width: 32ch; margin: 0 0 18px;">Any column order. ClariComp will match your headers in the next step.</p>
+                  <button class="btn btn--primary" type="button" style="padding: 10px 18px; font-size: 13.5px;">Browse files</button>
+                  <div style="margin-top: 14px; font-family: var(--mono); font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">.CSV · .XLSX · up to 50 MB</div>
+                </div>
+
+                <!-- column matching -->
+                <div>
+                  <div class="eyebrow" style="margin-bottom: 14px;">Auto-detected columns</div>
+                  <table style="width: 100%; border-collapse: collapse; font-size: 13.5px;">
+                    <tbody>
+                      <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 11px 0; width: 38%;">Date</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ trip_date</td><td style="padding: 11px 0; text-align: right; color: #2f7a52;">✓</td></tr>
+                      <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 11px 0;">Employee</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ user_name</td><td style="padding: 11px 0; text-align: right; color: #2f7a52;">✓</td></tr>
+                      <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 11px 0;">Origin</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ from_address</td><td style="padding: 11px 0; text-align: right; color: #2f7a52;">✓</td></tr>
+                      <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 11px 0;">Destination</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ to_address</td><td style="padding: 11px 0; text-align: right; color: #2f7a52;">✓</td></tr>
+                      <tr style="border-bottom: 1px solid var(--border);"><td style="padding: 11px 0;">Mode</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ transport_mode</td><td style="padding: 11px 0; text-align: right; color: #2f7a52;">✓</td></tr>
+                      <tr><td style="padding: 11px 0;">Distance</td><td style="padding: 11px 0; font-family: var(--mono); font-size: 12.5px; color: var(--text-mid);">→ -</td><td style="padding: 11px 0; text-align: right; color: #a07024;">⚠</td></tr>
+                    </tbody>
+                  </table>
+                  <div style="margin-top: 18px; font-size: 13.5px; color: var(--text-mid);"><span style="color: #a07024;">⚠</span> <strong style="font-weight: 500; color: var(--text);">Distance missing</strong> - ClariComp will compute it via Haversine &amp; Distance Matrix.</div>
+                  <button class="btn btn--primary" type="button" style="margin-top: 22px;">Continue · 312 rows ready</button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── One-click PDF ── -->
+            <div class="hero-panel" data-panel="pdf" style="display: none; padding: 48px; min-height: 520px; background: rgba(240,245,249,0.6);">
+              <div style="max-width: 520px; margin: 0 auto; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 44px 44px 32px; box-shadow: 0 24px 60px -28px rgba(32,56,72,0.3);">
+                <div style="display:flex; justify-content: space-between; align-items: flex-start; margin-bottom: 28px;">
+                  <div>
+                    <div style="font-family: var(--serif); font-size: 20px; line-height: 1.15; margin-bottom: 2px;">Northgate Manufacturing Ltd</div>
+                    <div style="font-family: var(--mono); font-size: 10px; color: var(--text-mid); letter-spacing: 0.06em;">SECR · STREAMLINED ENERGY &amp; CARBON REPORT</div>
+                  </div>
+                  <div style="padding: 8px 12px; border: 1.5px dashed var(--text-mid); border-radius: 50%; color: var(--text-mid); font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; text-transform: uppercase; transform: rotate(-4deg); text-align: center;">
+                    <div>DEFRA 2025</div>
+                    <div>VERIFIED</div>
+                  </div>
+                </div>
+
+                <div style="margin-bottom: 22px;">
+                  <div style="font-family: var(--serif); font-size: 24px; line-height: 1.1; margin-bottom: 4px;">Scope 3 - Business Travel</div>
+                  <div style="font-family: var(--mono); font-size: 10.5px; color: var(--text-mid); letter-spacing: 0.04em;">Category 6 · DEFRA 2025 conversion factors applied</div>
+                </div>
+
+                <div style="display:flex; justify-content: space-between; align-items: baseline; margin-bottom: 22px; padding-bottom: 18px; border-bottom: 1px solid var(--border);">
+                  <div>
+                    <div style="font-family: var(--serif); font-size: 54px; line-height: 1; letter-spacing: -0.02em;">47.218</div>
+                    <div style="font-family: var(--mono); font-size: 9.5px; color: var(--text-mid); letter-spacing: 0.08em; margin-top: 6px;">TONNES CO₂E</div>
+                  </div>
+                  <div style="text-align: right;">
+                    <div style="font-family: var(--mono); font-size: 9.5px; color: var(--text-mid); letter-spacing: 0.08em;">VS FY 23-24</div>
+                    <div style="font-family: var(--serif); font-size: 20px; color: #a07024; margin-top: 4px;">+12.4%</div>
+                  </div>
+                </div>
+
+                <table style="width: 100%; border-collapse: collapse; font-size: 11.5px;">
+                  <thead>
+                    <tr>
+                      <th style="text-align: left; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text-mid); font-weight: 400; padding: 7px 0; border-bottom: 1px solid var(--border);">MODE</th>
+                      <th style="text-align: right; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text-mid); font-weight: 400; padding: 7px 0; border-bottom: 1px solid var(--border);">TRIPS</th>
+                      <th style="text-align: right; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text-mid); font-weight: 400; padding: 7px 0; border-bottom: 1px solid var(--border);">KM</th>
+                      <th style="text-align: right; font-family: var(--mono); font-size: 9px; letter-spacing: 0.08em; color: var(--text-mid); font-weight: 400; padding: 7px 0; border-bottom: 1px solid var(--border);">TCO₂E</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid var(--border);">Air - short-haul</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">44</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">33,210</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">21.488</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid var(--border);">Air - domestic</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">18</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">8,442</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">5.642</td></tr>
+                    <tr><td style="padding: 6px 0; border-bottom: 1px solid var(--border);">Rail</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">186</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">61,408</td><td style="padding: 6px 0; border-bottom: 1px solid var(--border); text-align:right; font-family: var(--mono);">2.180</td></tr>
+                    <tr><td style="padding: 6px 0;">Car · private</td><td style="padding: 6px 0; text-align:right; font-family: var(--mono);">52</td><td style="padding: 6px 0; text-align:right; font-family: var(--mono);">18,772</td><td style="padding: 6px 0; text-align:right; font-family: var(--mono);">3.162</td></tr>
+                  </tbody>
+                </table>
+
+                <div style="margin-top: 22px; padding-top: 16px; border-top: 1px solid var(--border); display:flex; justify-content: space-between; font-family: var(--mono); font-size: 9px; color: var(--text-light); letter-spacing: 0.06em;">
+                  <span>FILED · 14 APR 2026</span>
+                  <span>PAGE 01 OF 14</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div style="margin-top: 16px; font-family: var(--mono); font-size: 11px; color: var(--text-light); letter-spacing: 0.06em; text-transform: uppercase; text-align: center;">Live mockup - switch tabs to see the three primary outputs</div>
+      </div>
+
+
+    </div>
+  </section>
+
+  <!-- ───────────────── How it works ───────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="row-split" style="margin-bottom: 36px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">How it works · entry points</div>
+          <h2>Two ways in. One audit trail.</h2>
+        </div>
+        <p class="lede" style="margin-top: 10px;">ClariComp works two ways: <strong style="font-weight: 500; color: var(--text);">ongoing trip logging</strong> for continuous, audit-ready data, and a <strong style="font-weight: 500; color: var(--text);">one-off CSV / XLSX upload</strong> that delivers an immediate preview and a fast path to a PPN 06/21 plan. Most customers upload last year's spreadsheet first to prove the output - then switch to live logging for future cycles.</p>
+      </div>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step__num">01 / UPLOAD</div>
+          <h3 class="step__title">Drop in last year's travel spreadsheet.</h3>
+          <p class="step__body">CSV or XLSX, any column order. ClariComp matches your headers and flags missing fields before processing.</p>
+        </div>
+        <div class="step" style="padding-left: 28px;">
+          <div class="step__num">02 / REVIEW</div>
+          <h3 class="step__title">Review carbon estimates, hotspots and quality.</h3>
+          <p class="step__body">Breakdown by mode, top-5 hottest routes, completeness score per row, and a tender-readiness assessment.</p>
+        </div>
+        <div class="step" style="padding-left: 28px;">
+          <div class="step__num">03 / EXPORT</div>
+          <h3 class="step__title">Download the preview - or generate a CRP.</h3>
+          <p class="step__body">Indicative preview PDF in the browser. Compliance Pro turns the same data into a signed PPN 06/21 plan and a public verification URL.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Problem ───────────────── -->
+  <section class="section section--mute">
+    <div class="container">
+      <div class="row-split">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">The spreadsheet problem</div>
+          <h2>Most UK manufacturers calculate flight emissions wrong.</h2>
+        </div>
+        <div style="max-width: 60ch;">
+          <p style="font-size: 18px; line-height: 1.55;">Most travel spreadsheets estimate flight distance from a road route or Google Maps. DEFRA requires <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">Haversine Great Circle</span> for aviation.</p>
+          <p style="font-size: 18px; line-height: 1.55; color: var(--text-mid);">If your statutory filing uses the wrong method, the number you sign off on is factually incorrect. And without a formula trail, an auditor cannot verify how the number was reached - only that it appears on a spreadsheet.</p>
+          <p style="font-size: 18px; line-height: 1.55; color: var(--text-mid);">That is the audit risk. ClariComp removes it.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Who buys it (personas) ───────────────── -->
+  <section class="section section--mute">
+    <div class="container">
+      <div class="row-split" style="margin-bottom: 48px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">Who buys it</div>
+          <h2>Six roles. One artefact.</h2>
+        </div>
+        <p class="lede" style="margin-top: 10px;">SECR and PPN 06/21 don't land on a sustainability team - they land on whoever owns the filing. ClariComp is shaped for the six roles that actually carry it.</p>
+      </div>
+
+      <div style="display:grid; grid-template-columns: repeat(3, 1fr); gap: 1px; background: var(--border); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden;">
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">01 · Owner of risk</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">Finance Director · Financial Controller</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Signs the SECR document. Carries audit risk. Needs a number defensible at row level - and the cost of getting there to come in under one billable auditor hour.</p>
+        </div>
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">02 · Owner of bid</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">Bid · Tender Manager</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Assembles the response on £5m+ public-sector tenders. Needs a PPN 06/21 Carbon Reduction Plan that passes procurement's methodology check on the first read.</p>
+        </div>
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">03 · Owner of operations</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">Operations Director</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Sits between commercial growth and operational compliance. Needs reporting that doesn't pull engineering or finance time off-task for two weeks every year.</p>
+        </div>
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">04 · Owner of compliance</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">HSE Manager · Compliance Manager</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Already owns ISO, H&amp;S and regulatory standards. Inherits carbon by default. Wants the same evidence-chain rigour ClariComp applies by default.</p>
+        </div>
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">05 · Owner of procurement</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">Procurement Manager</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Vets suppliers and reviews incoming CRPs as much as filing the company's own. Needs a verification URL that resolves and a methodology that holds up.</p>
+        </div>
+
+        <div style="background: var(--card); padding: 32px 28px;">
+          <div style="display:flex; align-items: center; gap: 10px; margin-bottom: 14px;">
+            <span class="mono" style="font-size: 10.5px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--text-light);">06 · Owner of data</span>
+          </div>
+          <h3 style="font-size: 22px; line-height: 1.18; margin-bottom: 10px;">Office Manager · Admin Manager</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">Already the one consolidating expense exports and travel receipts. Becomes the practical owner of the spreadsheet. Logs on behalf, exports clean, hands off to finance.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Who it's for ───────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="eyebrow" style="margin-bottom: 14px;">Who it's for</div>
+      <h2 style="margin-bottom: 48px;">Built for one person handling carbon without a sustainability team.</h2>
+
+      <div class="grid-2">
+        <div class="card" style="padding: 36px 40px;">
+          <div class="eyebrow" style="color: var(--text-light); margin-bottom: 18px;">The situation</div>
+          <div class="stack-24">
+            <div>
+              <h4>150-300 travel entries living in Excel</h4>
+              <p class="muted" style="font-size: 14.5px; margin: 4px 0 0;">Receipts, expense exports and a few forwarded emails. Different formats. Patched together at year-end.</p>
+            </div>
+            <div>
+              <h4>Two weeks per year - someone in finance</h4>
+              <p class="muted" style="font-size: 14.5px; margin: 4px 0 0;">No carbon background. Cross-checking factors against an HMG PDF that updates annually.</p>
+            </div>
+            <div>
+              <h4>Finance Director signs a number they can't fully defend</h4>
+              <p class="muted" style="font-size: 14.5px; margin: 4px 0 0;">If the auditor asks how flight distance was calculated, the answer is "Google Maps".</p>
+            </div>
+            <div>
+              <h4>PPN 06/21 methodology that isn't traceable</h4>
+              <p class="muted" style="font-size: 14.5px; margin: 4px 0 0;">Carbon Reduction Plan attached to a £5m bid. Procurement asks the four questions. No good answers.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: 36px 40px; background: var(--navy); color: var(--white); border-color: var(--navy);">
+          <div class="eyebrow" style="color: var(--blue-light); margin-bottom: 18px;">What changes with ClariComp</div>
+          <div class="stack-24">
+            <div>
+              <h4 style="color: var(--white);">Every trip logged at source</h4>
+              <p style="font-size: 14.5px; margin: 4px 0 0; color: var(--blue-light);">Or a single CSV upload at year-end. Same schema. Same factor set. Same audit trail.</p>
+            </div>
+            <div>
+              <h4 style="color: var(--white);">DEFRA 2025 factors applied automatically</h4>
+              <p style="font-size: 14.5px; margin: 4px 0 0; color: var(--blue-light);">Table 5 Business Travel, 6 decimal places. Versioned. The factor set used on every row is stamped on the row.</p>
+            </div>
+            <div>
+              <h4 style="color: var(--white);">Formula visible for every calculation</h4>
+              <p style="font-size: 14.5px; margin: 4px 0 0; color: var(--blue-light);">Haversine distance. Factor reference. Multiplication. Every line in the same form. Immutable.</p>
+            </div>
+            <div>
+              <h4 style="color: var(--white);">PPN 06/21 Carbon Reduction Plan in one click</h4>
+              <p style="font-size: 14.5px; margin: 4px 0 0; color: var(--blue-light);">SECR appendix, methodology statement, Director signature block, public verification URL - generated together.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── SECR stress cycle ───────────────── -->
+  <section class="section section--mute">
+    <div class="container">
+      <div class="row-split" style="margin-bottom: 36px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">The SECR cycle</div>
+          <h2>Where you are determines what ClariComp can do for you.</h2>
+        </div>
+        <p class="lede" style="margin-top: 10px;">Carbon reporting is seasonal. Most UK finance teams hit it once a year and scramble. ClariComp's value changes by quarter - and right now, the tender window is open.</p>
+      </div>
+
+      <div class="cycle">
+        <div class="cycle__cell">
+          <div class="cycle__q">Q1 · Apr - Jun</div>
+          <h3>The Scramble</h3>
+          <p>Upload your existing CSV. Get a clean DEFRA report in 24 hours - even if your year ends next week.</p>
+        </div>
+        <div class="cycle__cell cycle__cell--now">
+          <div class="cycle__q"><span style="display:inline-block; width:6px; height:6px; border-radius:50%; background: #8fd3a8;"></span> Q2 · Jul - Sep · Now</div>
+          <h3>The Tender Window</h3>
+          <p>Don't let a calculation error disqualify a £5m bid. Generate a PPN 06/21 plan with a verifiable methodology in one afternoon.</p>
+          <div class="cycle__tag" style="margin-top: 28px;">Active quarter</div>
+        </div>
+        <div class="cycle__cell">
+          <div class="cycle__q">Q3 · Oct - Dec</div>
+          <h3>The Quiet Period</h3>
+          <p>Set up log-at-source now so January doesn't become two weeks of cross-checking expense reports.</p>
+        </div>
+        <div class="cycle__cell">
+          <div class="cycle__q">Q4 · Jan - Mar</div>
+          <h3>The Setup</h3>
+          <p>Make next year's audit invisible. Roles, factor versioning and approval routing for the new reporting period.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Pricing anchor ───────────────── -->
+  <section class="section">
+    <div class="container">
+      <div class="grid-2" style="align-items: stretch; gap: 56px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">The maths of £450</div>
+          <h2 style="margin-bottom: 28px;">One auditor hour costs more than a month of Compliance Pro.</h2>
+          <p style="font-size: 18px; line-height: 1.55; color: var(--text-mid);">Auditors charge around <span class="mono" style="color: var(--text);">£300 per hour</span> to question a number. Compliance Pro is <span class="mono" style="color: var(--text);">£450 per month</span>. If ClariComp's formula trail saves you a single follow-up question on a single row, it has already paid for the year.</p>
+          <p style="font-size: 18px; line-height: 1.55; color: var(--text-mid);">Compliance Pro is the tier built for the buyer this page is written for: 250-500 staff, SECR-required, bidding on PPN 06/21 contracts.</p>
+          <div style="margin-top: 28px;">
+            <a href="pricing.html" class="btn btn--ghost btn--lg">See all three tiers</a>
+          </div>
+        </div>
+
+        <div class="tier tier--feature" style="transform: none;">
+          <div class="tier__name" style="display:flex; justify-content: space-between; align-items: center;">
+            <span>Compliance Pro</span>
+            <span style="font-family: var(--sans); font-size: 11px; letter-spacing: 0.06em; padding: 3px 10px; background: rgba(227,237,245,0.16); border-radius: 99px;">RECOMMENDED</span>
+          </div>
+          <div class="tier__price">£450<span style="font-family: var(--mono); font-size: 16px; color: var(--blue-light); letter-spacing: 0; margin-left: 4px;">/mo</span></div>
+          <div class="tier__per">250-500 employees · billed monthly</div>
+          <p class="tier__tagline">Full PPN 06/21 and SECR output, formula trail appendix, public verification URL, Director signature block.</p>
+          <ul class="tier__features">
+            <li>SECR-compliant annual report</li>
+            <li>PPN 06/21 Carbon Reduction Plan, generated in one click</li>
+            <li>DEFRA 2025 factor set, 6-decimal precision</li>
+            <li>Haversine Great Circle for flights</li>
+            <li>Distance Matrix for road & rail</li>
+            <li>Immutable formula trail per row</li>
+            <li>Public verification URL for tender submissions</li>
+          </ul>
+          <a href="preview.html" class="tier__cta">Try the preview first →</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Guides preview ───────────────── -->
+  <section class="section section--mute">
+    <div class="container">
+      <div class="row-split" style="margin-bottom: 40px;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 14px;">Guides</div>
+          <h2>Three things worth reading before you bid.</h2>
+        </div>
+        <p class="lede" style="margin-top: 10px;">Short, practical writing on what UK procurement actually expects. Written for the finance director or bid manager doing this on their own.</p>
+      </div>
+
+      <div class="grid-3">
+        <a href="guide-crp.html" class="card" style="text-decoration: none; color: inherit; display: block; transition: border-color .15s;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div class="eyebrow" style="margin-bottom: 12px;">Tender compliance</div>
+          <h3 style="font-size: 22px; line-height: 1.22; margin-bottom: 10px;">How to prepare a Carbon Reduction Plan for public tenders</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">What a CRP must contain, the methodology statement, and why procurement teams care about the formula trail.</p>
+          <div style="margin-top: 28px; font-family: var(--mono); font-size: 12px; color: var(--navy); letter-spacing: 0.04em;">Read the guide →</div>
+        </a>
+        <a href="guide-spreadsheet.html" class="card" style="text-decoration: none; color: inherit; display: block;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div class="eyebrow" style="margin-bottom: 12px;">Reporting</div>
+          <h3 style="font-size: 22px; line-height: 1.22; margin-bottom: 10px;">How to use last year's spreadsheet data for carbon reporting</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">The columns you need, the errors auditors flag, and the cleanest path from expense export to filing.</p>
+          <div style="margin-top: 28px; font-family: var(--mono); font-size: 12px; color: var(--navy); letter-spacing: 0.04em;">Read the guide →</div>
+        </a>
+        <a href="guide-auditor.html" class="card" style="text-decoration: none; color: inherit; display: block;" onmouseover="this.style.borderColor='var(--navy)'" onmouseout="this.style.borderColor='var(--border)'">
+          <div class="eyebrow" style="margin-bottom: 12px;">Reporting</div>
+          <h3 style="font-size: 22px; line-height: 1.22; margin-bottom: 10px;">How to make carbon reporting audit-friendly</h3>
+          <p style="font-size: 14.5px; color: var(--text-mid); margin: 0;">The difference between a number and a defensible number. What the formula trail looks like in practice.</p>
+          <div style="margin-top: 28px; font-family: var(--mono); font-size: 12px; color: var(--navy); letter-spacing: 0.04em;">Read the guide →</div>
+        </a>
+      </div>
+
+      <div style="margin-top: 36px; display:flex; justify-content: center;">
+        <a href="guides.html" class="btn btn--ghost">All guides</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ───────────────── Sign up ───────────────── -->
+  <section class="section section--dark" id="signup">
+    <div class="container">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center;">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 16px; color: var(--blue-light);">Sign up · early access</div>
+          <h2 style="font-size: 52px; line-height: 1.04; letter-spacing: -0.02em; color: var(--white); margin: 0 0 18px; max-width: 16ch;">Get a ClariComp <em style="font-family: var(--serif); font-weight: 400; letter-spacing: -0.015em;">workspace</em> for your filing.</h2>
+          <p style="font-size: 17px; color: var(--blue-light); margin: 0 0 28px; max-width: 48ch;">Reserve a Compliance Pro workspace. Sign in, invite the bid manager, upload last year's spreadsheet, and have your draft PPN 06/21 ready by the end of the day.</p>
+          <ul style="list-style: none; padding: 0; margin: 0; display:flex; flex-direction: column; gap: 10px; font-size: 14.5px; color: var(--blue-light);">
+            <li style="display:flex; gap: 10px; align-items: center;"><span class="mono" style="color: #8fd3a8;">✓</span>30-day live trial - full Compliance Pro features</li>
+            <li style="display:flex; gap: 10px; align-items: center;"><span class="mono" style="color: #8fd3a8;">✓</span>Onboarding call with Seyi · no slides</li>
+            <li style="display:flex; gap: 10px; align-items: center;"><span class="mono" style="color: #8fd3a8;">✓</span>Carry-over to live logging when the trial ends</li>
+          </ul>
+        </div>
+
+        <form onsubmit="event.preventDefault(); document.getElementById('signup-form').hidden = true; document.getElementById('signup-ok').hidden = false;" id="signup-form" style="background: rgba(255,255,255,0.04); border: 1px solid rgba(227,237,245,0.16); border-radius: var(--radius-lg); padding: 32px 36px; backdrop-filter: blur(6px);">
+          <div class="eyebrow" style="color: var(--blue-light); margin-bottom: 22px;">Reserve your workspace</div>
+          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+            <div class="field"><label style="color: var(--blue-light);" for="su-name">Your name</label><input id="su-name" type="text" required style="background: rgba(255,255,255,0.06); border-color: rgba(227,237,245,0.22); color: var(--white);" /></div>
+            <div class="field"><label style="color: var(--blue-light);" for="su-role">Role</label>
+              <select id="su-role" style="background: rgba(255,255,255,0.06); border-color: rgba(227,237,245,0.22); color: var(--white);">
+                <option>Finance Director / Controller</option>
+                <option>Bid / Tender Manager</option>
+                <option>Operations Director</option>
+                <option>HSE / Compliance Manager</option>
+                <option>Procurement Manager</option>
+                <option>Office / Admin Manager</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+          <div class="field" style="margin-top: 14px;"><label style="color: var(--blue-light);" for="su-co">Company</label><input id="su-co" type="text" required style="background: rgba(255,255,255,0.06); border-color: rgba(227,237,245,0.22); color: var(--white);" /></div>
+          <div class="field" style="margin-top: 14px;"><label style="color: var(--blue-light);" for="su-email">Work email</label><input id="su-email" type="email" required style="background: rgba(255,255,255,0.06); border-color: rgba(227,237,245,0.22); color: var(--white);" /></div>
+          <div class="field" style="margin-top: 14px;"><label style="color: var(--blue-light);" for="su-size">Headcount</label>
+            <select id="su-size" style="background: rgba(255,255,255,0.06); border-color: rgba(227,237,245,0.22); color: var(--white);">
+              <option>Under 100</option>
+              <option selected>100 - 250</option>
+              <option>250 - 500</option>
+              <option>500 - 1,000</option>
+              <option>1,000+</option>
+            </select>
+          </div>
+          <button type="submit" class="btn btn--lg" style="background: var(--white); color: var(--navy); margin-top: 22px; width: 100%; justify-content: center;">Reserve workspace →</button>
+          <div style="margin-top: 12px; font-family: var(--mono); font-size: 10.5px; color: var(--mid); letter-spacing: 0.06em; text-align: center;">No card · 30-day trial · cancel any time</div>
+        </form>
+
+        <div id="signup-ok" hidden style="grid-column: 2; background: rgba(143,211,168,0.08); border: 1px solid rgba(143,211,168,0.3); border-radius: var(--radius-lg); padding: 36px 36px; text-align: center;">
+          <div style="font-family: var(--serif); font-size: 32px; line-height: 1.15; color: var(--white); margin-bottom: 10px;">Workspace reserved.</div>
+          <p style="color: var(--blue-light); margin: 0;">Check your inbox - Seyi will follow up within 24 hours with onboarding access.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+  <script>
+    // Hero 3-tab switcher (Dashboard · CSV upload · One-click PDF)
+    (function () {
+      const tabs = document.querySelectorAll('.hero-tab');
+      const panels = document.querySelectorAll('.hero-panel');
+      const url = document.getElementById('hero-url');
+      const badgeText = document.getElementById('hero-badge-text');
+      const meta = {
+        dash: { url: 'claricomp.app / dashboard',     badge: 'FY 25 LIVE' },
+        csv:  { url: 'claricomp.app / imports / new', badge: '312 ROWS' },
+        pdf:  { url: 'SECR_Report_Northgate_FY24-25.pdf', badge: 'SIGNED' },
+      };
+      tabs.forEach(t => t.addEventListener('click', () => {
+        const k = t.dataset.tab;
+        tabs.forEach(x => {
+          const on = x === t;
+          x.classList.toggle('is-active', on);
+          x.style.background = on ? 'var(--navy)' : 'transparent';
+          x.style.color = on ? 'var(--white)' : 'var(--text-mid)';
+        });
+        panels.forEach(p => p.style.display = p.dataset.panel === k ? '' : 'none');
+        // Restore each panel's intended display
+        const active = document.querySelector(`.hero-panel[data-panel="${k}"]`);
+        if (active) {
+          active.style.display = k === 'dash' ? 'grid' : k === 'csv' ? 'block' : 'block';
+        }
+        if (url) url.textContent = meta[k].url;
+        if (badgeText) badgeText.textContent = meta[k].badge;
+      }));
+    })();
+  </script>
+</body>
+</html>

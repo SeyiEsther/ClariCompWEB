@@ -1,0 +1,108 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>FAQ - ClariComp</title>
+  <meta name="description" content="Common questions about ClariComp: what it produces, what data it accepts, how the preview compares to the paid product." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <div class="hero__eyebrow"><span class="dot"></span>FAQ</div>
+      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">The questions people ask before they upload.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">If yours isn't here, email <a href="mailto:seyi@claricomp.co.uk" style="color: var(--navy); text-decoration: underline; text-underline-offset: 3px;">seyi@claricomp.co.uk</a>.</p>
+    </div>
+  </section>
+
+  <section class="section section--first" style="padding-top: 24px;">
+    <div class="container" style="max-width: 880px;">
+
+      <div class="eyebrow" style="margin: 0 0 18px;">The product</div>
+
+      <details class="faq-item" open>
+        <summary>Does ClariComp produce a PPN 06/21 compliant document?</summary>
+        <div class="faq-item__body">Yes - on the Compliance Pro and Enterprise tiers. The Carbon Reduction Plan output includes the four artefacts PPN 06/21 requires: a methodology statement, a Net Zero commitment with a target year, a Director-level signature block, and a public verification URL that procurement can check. The Self-Serve tier produces an indicative preview only, not a tender-ready CRP.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is the preview the same as the final report?</summary>
+        <div class="faq-item__body">The numbers are. The artefacts aren't. The preview uses the same calculation engine, the same DEFRA 2025 factor set, the same Haversine method - but the output is a clearly-labelled indicative PDF, not the SECR annual report or the PPN 06/21 CRP. Upgrading turns the same data into the full documents without re-uploading.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Does ClariComp cover Scope 1 and 2?</summary>
+        <div class="faq-item__body">No. ClariComp covers Scope 3 Category 6 - Business Travel - only. If you need Scope 1 (direct fuel) or Scope 2 (electricity), or other Scope 3 categories, this is not the right tool. The product is deliberately narrow: one category, done properly, at one price.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What transport modes are supported?</summary>
+        <div class="faq-item__body">Air (domestic, short-haul, long-haul, international, with class differentiation); rail (national, light rail, Eurostar, Underground); coach and bus; car (by size, fuel type, EV, plug-in hybrid); motorbike; taxi (regular and black cab); ferry (foot and car passenger). Full factor list is on the <a href="methodology.html" style="text-decoration: underline;">methodology page</a>.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>How accurate is the preview?</summary>
+        <div class="faq-item__body">As accurate as your data lets it be. The calculation precision is six decimal places throughout. The preview reports an aggregate confidence score: 98.7% on a sample dataset means the methodology applied is unambiguous for 98.7% of the emissions accounted for. Lower confidence on your file usually means missing transport class or missing destinations on a small number of rows.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I use ClariComp without a sustainability team?</summary>
+        <div class="faq-item__body">That is the design brief. ClariComp was built for the finance, operations or compliance person handling carbon reporting alone. No accreditations needed, no carbon literacy required - the methodology is documented, the factors are referenced, and the formula trail explains itself to your auditor.</div>
+      </details>
+
+      <div class="eyebrow" style="margin: 56px 0 18px;">Your data</div>
+
+      <details class="faq-item">
+        <summary>What columns does my spreadsheet need?</summary>
+        <div class="faq-item__body">Five required: <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">trip_date</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">from_address</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">to_address</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">transport_mode</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">user_name</span>. Optional: <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">distance_km</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">class</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">fuel_type</span>, <span class="mono" style="font-size: 13px; background: var(--white); padding: 2px 6px; border-radius: 3px;">passenger_count</span>. Any column order. Headers are matched automatically; a missing distance is computed.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What year of data should I upload?</summary>
+        <div class="faq-item__body">Last year. ClariComp only accepts data from the previous financial year. This is to ensure your preview reflects a complete reporting period - partial-year data produces a misleading total. Files containing current-year data are rejected at validation with an explicit message.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>What happens if my file has missing data?</summary>
+        <div class="faq-item__body">Rows with partial data are processed where possible; ClariComp flags assumptions on each row (e.g. "aircraft class inferred as economy"). Rows that cannot be processed (missing destination, missing date, missing mode) appear in a separate "needs work" section with the reason. Your file is never rejected wholesale for a small number of incomplete rows.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Can I import historical data?</summary>
+        <div class="faq-item__body">For trend baselines, yes - on the Compliance Pro tier and above. Historical years are stamped with the DEFRA factor set that was current at the time, not the latest set, so historical numbers don't shift when the tables update.</div>
+      </details>
+
+      <div class="eyebrow" style="margin: 56px 0 18px;">Compliance &amp; trust</div>
+
+      <details class="faq-item">
+        <summary>What is the public verification URL?</summary>
+        <div class="faq-item__body">A unique, immutable URL on <span class="mono" style="font-size: 13px;">claricomp.co.uk/v/&lt;your-co&gt;</span> that hosts your filed CRP. Procurement teams reviewing your bid can visit it directly. The page shows the factor set used, the reporting period, the total tonnage, the methodology version, and the Director signature - without exposing your underlying trip data.</div>
+      </details>
+
+      <details class="faq-item">
+        <summary>Is it GDPR compliant?</summary>
+        <div class="faq-item__body">Yes. Uploaded files are processed server-side and deleted after the preview is generated unless you're on a paid tier (where retention is required for re-export). No data is sold, shared or used for cross-customer benchmarking. Full detail on the <a href="privacy.html" style="text-decoration: underline;">data privacy page</a>.</div>
+      </details>
+
+    </div>
+  </section>
+
+  <!-- Still have a question -->
+  <section class="section section--dark">
+    <div class="container" style="text-align: center;">
+      <h2 style="font-size: 44px; max-width: 22ch; margin: 0 auto 14px;">Still have a question?</h2>
+      <p style="font-size: 17px; color: var(--blue-light); max-width: 50ch; margin: 0 auto 28px;">Email Seyi directly. Responses within 24 hours. No sales calls.</p>
+      <a href="mailto:seyi@claricomp.co.uk" class="btn btn--lg" style="background: var(--white); color: var(--navy);">seyi@claricomp.co.uk</a>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

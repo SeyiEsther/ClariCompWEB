@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>How to use last year's spreadsheet data for carbon reporting - ClariComp</title>
+  <meta name="description" content="Why last-year data is correct for SECR. The columns you need. The errors auditors flag." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <article class="article">
+    <div style="display:flex; gap: 10px; align-items: center; margin-bottom: 24px;">
+      <span class="tag">Reporting</span>
+      <span class="mono" style="font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">7 min read · updated April 2026</span>
+    </div>
+    <h1>How to use last year's spreadsheet data for carbon reporting</h1>
+    <p class="lede">Most UK manufacturers already have the data they need to file a credible SECR submission. It just lives in five different exports, none of them designed for emissions accounting. This is the cleanest path from year-end spreadsheet to filed report.</p>
+
+    <h2>Why last-year data is correct for SECR</h2>
+    <p>SECR (Streamlined Energy and Carbon Reporting) requires you to report on a complete financial year. Half a year of data, or a year-to-date snapshot, will inflate per-row averages and miss seasonal patterns - the auditor will, correctly, refuse to sign it.</p>
+    <p>This is why ClariComp accepts last-year data only. If your reporting year is FY 2024-25 (ending March 2025) you upload data covering 1 April 2024 to 31 March 2025 - a complete period. The preview reflects an annual total, not a projection.</p>
+
+    <h2>What columns your spreadsheet needs</h2>
+    <p>Five required, four optional. Any column order. Headers are matched automatically; ClariComp normalises them on import.</p>
+
+    <h3>Required</h3>
+    <ul>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">trip_date</span> - ISO date or any unambiguous UK-format date.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">user_name</span> - employee name or ID; used for hotspots only, never published.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">from_address</span> - city, airport, station, or full address.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">to_address</span> - same.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">transport_mode</span> - air, rail, car, taxi, coach, etc.</li>
+    </ul>
+
+    <h3>Optional (but recommended)</h3>
+    <ul>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">distance_km</span> - if you already have it from your travel system.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">class</span> - economy, business, first; or vehicle size for cars.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">fuel_type</span> - petrol, diesel, EV, plug-in hybrid.</li>
+      <li><span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">passenger_count</span> - defaults to 1 for car journeys if missing.</li>
+    </ul>
+
+    <h2>Common errors and how to fix them</h2>
+
+    <h3>1. Round trips logged as one row</h3>
+    <p>An expense system that records "London → Frankfurt and back" as a single row of cost will produce a one-way distance unless ClariComp can detect the pattern. Fix: split into two rows, each with the appropriate one-way leg. If you can't reliably split historic data, ClariComp will treat ambiguous entries as round-trip and flag them with reduced confidence - the flag is documented in the formula trail.</p>
+
+    <h3>2. Aircraft class missing</h3>
+    <p>Business class produces materially more emissions than economy. If the spreadsheet has no <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">class</span> column, ClariComp infers economy and flags the row. For a defensible filing, populate class from your travel-management system if you have one, or from cabin-class indicated on expense receipts.</p>
+
+    <h3>3. Airport ambiguity</h3>
+    <p>"London → Paris" is ambiguous: there are three Paris airports and four London ones. Distance varies, but factor doesn't. ClariComp uses city centroids when the airport is unspecified - fine for short-haul, less fine for hubs. If your finance team can populate the airport name, do.</p>
+
+    <h3>4. Mixing financial year with calendar year</h3>
+    <p>The auditor will reject a file that includes both FY 2024-25 trips and FY 2023-24 trips. Filter your export to the reporting period before uploading.</p>
+
+    <h2>How to upload to ClariComp</h2>
+    <p>Drop the file on the <a href="preview.html">preview page</a>. Header matching, validation and the preview happen in the browser within a minute or two. If validation flags any of the issues above, you'll see them clearly - with the affected row indices - before any emission is computed.</p>
+
+    <hr class="divider" />
+
+    <div style="display:flex; gap: 12px;">
+      <a href="preview.html" class="btn btn--primary">Download the template &amp; try the preview</a>
+      <a href="guide-auditor.html" class="btn btn--ghost">Read: making it audit-friendly →</a>
+    </div>
+  </article>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

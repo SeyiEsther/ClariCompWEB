@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>What buyers expect in UK tender carbon submissions - ClariComp</title>
+  <meta name="description" content="From the procurement officer's perspective. What a passing CRP looks like vs one that goes back for clarification." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <article class="article">
+    <div style="display:flex; gap: 10px; align-items: center; margin-bottom: 24px;">
+      <span class="tag">Tender compliance</span>
+      <span class="mono" style="font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">6 min read · updated April 2026</span>
+    </div>
+    <h1>What buyers expect in UK tender carbon submissions</h1>
+    <p class="lede">A procurement officer reviewing a £5m+ bid spends, on average, four to six minutes on the carbon section. They are not auditing your maths - they are checking whether the artefacts are present, the methodology is plausible, and the verification URL works. Here is what passes that check, and what gets a clarification request.</p>
+
+    <h2>The procurement team's perspective</h2>
+    <p>Procurement teams are not in the business of catching bidders out. They are in the business of awarding contracts to compliant suppliers and being able to defend, internally, that they did so. The carbon section of a bid response is a gate, not a competition. You either pass or you don't.</p>
+    <p>From the buyer's point of view, the question is not "is this number accurate?" - they have no way to know. The question is "if asked by my own auditor, can I show that I followed the published criteria?" If your CRP is verifiable, they can.</p>
+
+    <h2>What a passing CRP looks like</h2>
+    <p>A passing CRP, on first read, lets the procurement officer answer four questions in under two minutes each: <em>Is the plan published on the supplier's own domain? Is there a Net Zero commitment with a target year? Is the methodology stated explicitly? Is the document signed at Director level?</em></p>
+    <p>The visual signals are simple. The cover page carries the reporting period and the factor set version. The methodology paragraph references a named source (DEFRA 2025, Table 5 - not just "DEFRA"). The signature page has a printed name and a role title, not just a digital signature blob. The verification URL resolves, and the resolved page shows the same total tonnage as the document.</p>
+
+    <h2>What a passing CRP fails as</h2>
+    <p>The most common reason for a clarification request - which delays a bid by 5-10 working days - is a CRP whose methodology is vague enough that procurement cannot tell whether it is current. "Calculated using DEFRA factors" omits the year. "Distance calculated using mapping software" omits the geometry. Each omission is recoverable, but each costs you a round-trip with procurement that you didn't budget for.</p>
+    <p>The second most common reason is a verification URL that 404s, redirects to a generic sustainability page, or shows a different total than the attached PDF. Treat the URL as part of the bid response, not as an afterthought.</p>
+
+    <h2>The public verification URL requirement</h2>
+    <p>The verification URL exists so procurement can confirm the document is genuine and current. The page must:</p>
+    <ul>
+      <li>Be publicly accessible - no login.</li>
+      <li>Show the same reporting period, total tCO₂e and factor set as the PDF.</li>
+      <li>Be tied to a timestamp procurement can read.</li>
+      <li>Not be a marketing page about your sustainability stance.</li>
+    </ul>
+    <p>ClariComp issues the URL automatically when you generate the CRP. It lives at <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 14px;">claricomp.co.uk/v/&lt;your-co&gt;</span>, is immutable, and shows the report's headline figures without exposing trip-level data.</p>
+
+    <h2>If you only do one thing</h2>
+    <p>Read your CRP from the procurement officer's perspective. Imagine you have four minutes. Imagine you've read forty other CRPs today. Can you find the methodology paragraph? Does it name a factor table by year? Is the signature on a real page? Does the URL open?</p>
+    <p>If all four answers are obvious, you pass. If any is "I'd have to dig", you don't.</p>
+
+    <hr class="divider" />
+
+    <div style="display:flex; gap: 12px;">
+      <a href="preview.html" class="btn btn--primary">Try the preview</a>
+      <a href="guide-crp.html" class="btn btn--ghost">Read: how to prepare a CRP →</a>
+    </div>
+  </article>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

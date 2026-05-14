@@ -1,0 +1,172 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Methodology - ClariComp</title>
+  <meta name="description" content="Distance: Haversine Great Circle for flights, Distance Matrix for road and rail. Factors: DEFRA 2025 to six decimal places. GHG Protocol Scope 3 Category 6." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <div class="hero__eyebrow"><span class="dot"></span>Methodology · v2025.1</div>
+      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">What ClariComp does - exactly.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">A defensible carbon number is one you can show your working for. This page is the working. Read it once. Hand it to your auditor.</p>
+    </div>
+  </section>
+
+  <section class="section section--first" style="padding-top: 24px;">
+    <div class="container">
+
+      <div style="display:grid; grid-template-columns: 240px 1fr; gap: 64px;">
+        <!-- TOC -->
+        <aside style="position: sticky; top: 96px; align-self: start;">
+          <div class="eyebrow" style="margin-bottom: 16px;">On this page</div>
+          <nav style="display:flex; flex-direction: column; gap: 10px; font-size: 14px;">
+            <a href="#distance" style="color: var(--text-mid);">Distance calculation</a>
+            <a href="#factors" style="color: var(--text-mid);">Emission factors</a>
+            <a href="#precision" style="color: var(--text-mid);">Factor precision</a>
+            <a href="#confidence" style="color: var(--text-mid);">Confidence scoring</a>
+            <a href="#assumptions" style="color: var(--text-mid);">Assumptions</a>
+            <a href="#limitations" style="color: var(--text-mid);">Limitations</a>
+            <a href="#standards" style="color: var(--text-mid);">Standards alignment</a>
+            <a href="#audit" style="color: var(--text-mid);">For your audit</a>
+            <a href="#factor-table" style="color: var(--text-mid);">Full factor table</a>
+          </nav>
+        </aside>
+
+        <div>
+          <!-- Distance -->
+          <div id="distance" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">01 · Distance calculation</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">Haversine for aviation. Distance Matrix for ground.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Flights are calculated using the Haversine Great Circle formula. This is the geodesic distance between two points on a sphere - the path an aircraft actually follows, give or take routing.</p>
+            <div class="formula" style="margin: 18px 0;">
+<pre style="margin: 0; white-space: pre-wrap; font-family: var(--mono); font-size: 13px; line-height: 1.75;"><span class="c">d = 2r · asin(√(sin²(Δφ/2) + cos φ₁ · cos φ₂ · sin²(Δλ/2)))</span>
+
+<span class="c">where</span>
+  <span class="k">r</span>   = earth radius (6,371 km)
+  <span class="k">φ₁,φ₂</span> = latitudes of origin and destination
+  <span class="k">Δφ</span>  = φ₂ - φ₁
+  <span class="k">Δλ</span>  = λ₂ - λ₁</pre>
+            </div>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Road, rail and taxi journeys use the Google Maps Distance Matrix API to return real-route distance, accounting for actual road or track geometry. Where origin/destination is ambiguous, ClariComp falls back to the centroid of the named locality and flags the row.</p>
+          </div>
+
+          <!-- Factors -->
+          <div id="factors" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">02 · Emission factors</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">DEFRA 2025 GHG Conversion Factor tables, Table 5.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">All factors are sourced from the UK Government's 2025 release of the GHG conversion-factor tables, specifically Table 5 - Business Travel. Each row in your ClariComp file is annotated with the factor reference used, so an auditor can trace any calculation back to a published source.</p>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Factor updates are versioned. The 2025 release applies to reporting periods ending in 2025. Earlier periods use the corresponding earlier release - ClariComp does not retroactively apply newer factors to older data.</p>
+          </div>
+
+          <!-- Precision -->
+          <div id="precision" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">03 · Factor precision</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">Six decimal places. Carried through every step.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Rounding errors accumulate. ClariComp stores every factor at <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13.5px;">6 dp</span>, carries that precision through distance × factor, and only rounds at the final aggregate. The published report shows three decimal places of tonnes CO₂e; the audit appendix shows six.</p>
+          </div>
+
+          <!-- Confidence -->
+          <div id="confidence" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">04 · Confidence scoring</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">A score per row, aggregated per report.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Each row carries a confidence score from 0 to 100. The score is reduced when (a) the transport class is inferred rather than specified, (b) origin or destination is resolved to a centroid, (c) the trip is round-trip but only logged one-way, or (d) distance is not provided and Distance Matrix returns multiple plausible routes.</p>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">The aggregate confidence is the row-emission-weighted mean. A 98.7% confidence on a 47 tCO₂e total means the methodology applied is unambiguous for 98.7% of the emissions accounted for.</p>
+          </div>
+
+          <!-- Assumptions -->
+          <div id="assumptions" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">05 · Assumptions</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">What ClariComp assumes when your data is incomplete.</h2>
+            <ol style="font-size: 17px; color: var(--text); line-height: 1.65; padding-left: 1.1em; max-width: 60ch;">
+              <li style="margin-bottom: 10px;">Aircraft class defaults to <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13.5px;">economy</span> if not specified. Business and first carry materially different factors; ClariComp flags rows where class is inferred.</li>
+              <li style="margin-bottom: 10px;">Trips logged with a single date but a return implied (e.g. day-trip Manchester ↔ London) are treated as one-way unless a return row is present.</li>
+              <li style="margin-bottom: 10px;">Car journeys default to "average passenger car, unknown fuel" if engine size and fuel type are absent.</li>
+              <li style="margin-bottom: 10px;">Rail journeys outside the UK national rail network use the European rail factor if the route is fully European, the long-haul rail factor otherwise.</li>
+              <li style="margin-bottom: 10px;">Where two airports serve the same city (London, Paris, Milan), ClariComp uses the airport name if provided, else the city centroid.</li>
+            </ol>
+          </div>
+
+          <!-- Limitations -->
+          <div id="limitations" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">06 · Limitations</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">What ClariComp does not do.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">ClariComp covers <span style="color: var(--text);">Scope 3 Category 6 - Business Travel - only</span>. It does not calculate Scope 1 (direct fuel), Scope 2 (electricity), or other Scope 3 categories (purchased goods, transport of sold products, employee commuting, etc.). The preview output is indicative, not an audited statement.</p>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">If you need full-scope reporting or third-party assurance, ClariComp is not the right tool. The product is deliberately narrow - done properly, at one price - and we'd rather tell you that here than at the end of a sales call.</p>
+          </div>
+
+          <!-- Standards -->
+          <div id="standards" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">07 · Standards alignment</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">GHG Protocol Corporate Standard · Scope 3 Category 6.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">ClariComp follows the GHG Protocol Corporate Accounting & Reporting Standard, with calculations specifically aligned to the Scope 3 Standard's Category 6 (Business Travel) - the category covering employee travel between sites and to client engagements in third-party transport.</p>
+          </div>
+
+          <!-- Audit -->
+          <div id="audit" style="margin-bottom: 56px;">
+            <div class="eyebrow" style="margin-bottom: 8px;">08 · What this means for your audit</div>
+            <h2 style="font-size: 34px; margin-bottom: 14px;">The formula trail, in practice.</h2>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">Every row in your ClariComp file carries: the input fields (date, origin, destination, mode, class, passenger count); the computed distance with method; the DEFRA factor reference and value; the resulting emission; and the row-level confidence. The same trail is appended to your published report.</p>
+            <p style="font-size: 17px; color: var(--text-mid); max-width: 60ch;">When an auditor asks "where did this number come from", you can answer the question at the level of a single trip. That is the audit posture ClariComp was built for.</p>
+          </div>
+
+          <!-- Factor table -->
+          <div id="factor-table">
+            <div class="eyebrow" style="margin-bottom: 8px;">Appendix · Factor table</div>
+            <h2 style="font-size: 34px; margin-bottom: 18px;">DEFRA 2025 · Table 5 · Business Travel.</h2>
+            <table class="tbl">
+              <thead>
+                <tr>
+                  <th>Mode</th>
+                  <th>Class / fuel</th>
+                  <th>Unit</th>
+                  <th class="num">Factor (kgCO₂e)</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr><td>Air - domestic</td><td>Average passenger</td><td>pkm</td><td class="num">0.246550</td></tr>
+                <tr><td>Air - short-haul</td><td>Economy</td><td>pkm</td><td class="num">0.151378</td></tr>
+                <tr><td>Air - short-haul</td><td>Business</td><td>pkm</td><td class="num">0.227067</td></tr>
+                <tr><td>Air - long-haul</td><td>Economy</td><td>pkm</td><td class="num">0.148040</td></tr>
+                <tr><td>Air - long-haul</td><td>Premium economy</td><td>pkm</td><td class="num">0.236864</td></tr>
+                <tr><td>Air - long-haul</td><td>Business</td><td>pkm</td><td class="num">0.429316</td></tr>
+                <tr><td>Air - long-haul</td><td>First</td><td>pkm</td><td class="num">0.592160</td></tr>
+                <tr><td>Air - international</td><td>Average</td><td>pkm</td><td class="num">0.197915</td></tr>
+                <tr><td>Rail - national</td><td>-</td><td>pkm</td><td class="num">0.035463</td></tr>
+                <tr><td>Rail - light & trams</td><td>-</td><td>pkm</td><td class="num">0.027750</td></tr>
+                <tr><td>Rail - Eurostar</td><td>-</td><td>pkm</td><td class="num">0.004426</td></tr>
+                <tr><td>Underground</td><td>London</td><td>pkm</td><td class="num">0.027840</td></tr>
+                <tr><td>Coach</td><td>-</td><td>pkm</td><td class="num">0.027184</td></tr>
+                <tr><td>Bus - local</td><td>-</td><td>pkm</td><td class="num">0.118030</td></tr>
+                <tr><td>Car - average</td><td>Unknown fuel</td><td>vkm</td><td class="num">0.168350</td></tr>
+                <tr><td>Car - small</td><td>Petrol</td><td>vkm</td><td class="num">0.142810</td></tr>
+                <tr><td>Car - medium</td><td>Diesel</td><td>vkm</td><td class="num">0.166130</td></tr>
+                <tr><td>Car - large</td><td>Diesel</td><td>vkm</td><td class="num">0.207430</td></tr>
+                <tr><td>Car - plug-in hybrid</td><td>-</td><td>vkm</td><td class="num">0.067940</td></tr>
+                <tr><td>Car - battery EV</td><td>-</td><td>vkm</td><td class="num">0.047520</td></tr>
+                <tr><td>Motorbike - average</td><td>-</td><td>vkm</td><td class="num">0.113810</td></tr>
+                <tr><td>Taxi - regular</td><td>-</td><td>vkm</td><td class="num">0.148790</td></tr>
+                <tr><td>Taxi - black cab</td><td>-</td><td>vkm</td><td class="num">0.207110</td></tr>
+                <tr><td>Ferry - foot passenger</td><td>-</td><td>pkm</td><td class="num">0.018928</td></tr>
+                <tr><td>Ferry - car passenger</td><td>-</td><td>pkm</td><td class="num">0.130630</td></tr>
+              </tbody>
+            </table>
+            <p style="font-family: var(--mono); font-size: 12px; color: var(--text-light); margin-top: 14px; letter-spacing: 0.04em;">Source: UK Government GHG conversion factors for company reporting, 2025 release · Table 5 · Business Travel</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

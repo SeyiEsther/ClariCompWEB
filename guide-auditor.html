@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>How to make carbon reporting audit-friendly - ClariComp</title>
+  <meta name="description" content="The difference between a number and a defensible number. What the formula trail looks like in practice." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <article class="article">
+    <div style="display:flex; gap: 10px; align-items: center; margin-bottom: 24px;">
+      <span class="tag">Reporting</span>
+      <span class="mono" style="font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">7 min read · updated April 2026</span>
+    </div>
+    <h1>How to make carbon reporting audit-friendly</h1>
+    <p class="lede">A number and a defensible number are not the same thing. The number is the figure on the front of your report. The defensible number is the same figure, plus the workings that show how you arrived at it. Auditors verify the second one. This is how to build it.</p>
+
+    <h2>The difference between a number and a defensible number</h2>
+    <p>Every SECR filing produces a number. The Streamlined Energy and Carbon Report itself just needs the total. But the Director who signs the filing has, by signing, asserted that the number is materially correct. The auditor's job is to test that assertion.</p>
+    <p>If the auditor can reproduce, for any individual row, the journey from input data to emission figure - distance method, factor reference, multiplication, rounding - the assertion holds. If they cannot, the assertion is, technically, unsupported. The number is the same in both cases. Only one of them is defensible.</p>
+
+    <h2>What the formula trail looks like</h2>
+    <p>A formula trail is a per-row record of the inputs and the operations applied to them. For one row of a ClariComp report it looks like this:</p>
+
+    <div class="formula" style="margin: 18px 0;">
+<pre style="margin: 0; white-space: pre-wrap; font-family: var(--mono); font-size: 13px; line-height: 1.7;"><span class="c">// ROW 1,247 · LHR → DUB · 02 Sep 2024</span>
+<span class="c">// M. Aldridge · short-haul · economy</span>
+
+<span class="k">d</span>  = 463.218 km   <span class="c">(Haversine GC)</span>
+<span class="k">f</span>  = 0.151378     <span class="c">(DEFRA 2025 T5 · BT-AIR-SH-E)</span>
+<span class="k">e</span>  = d × f
+<span class="k">e</span>  = <span class="v">70.1255 kgCO₂e</span>
+
+<span class="c">// SIGNED · 14 Apr 2026 · 03:12 UTC</span>
+<span class="c">// SHA256 · 4a2e…f81c</span></pre>
+    </div>
+
+    <p>Five lines. Origin, destination, distance and method, factor and reference, multiplication, result. The row hash at the bottom is a tamper detector - if anyone alters the row after signing, the hash changes, and the change is visible.</p>
+    <p>Three hundred rows of this is a thirty-page appendix. The auditor does not read all thirty pages. They sample. The point is that any row they pick can be reproduced.</p>
+
+    <h2>How to respond to an auditor query</h2>
+    <p>The most common auditor question on Scope 3.6 is some version of "where did this row's number come from?". Without a formula trail, the answer is necessarily reconstructive - you go back to the spreadsheet, re-derive the distance, look up the factor, and explain what you did. That conversation takes an hour. The auditor bills for the hour. You spend the day before re-deriving.</p>
+    <p>With a formula trail, the answer is "Appendix C, row 1,247." The auditor reads the five lines, ticks the row, and moves on. The conversation takes ninety seconds.</p>
+
+    <blockquote>The cheapest way to manage audit cost is to make the audit boring.</blockquote>
+
+    <h2>Three habits that compound</h2>
+
+    <h3>1. Stamp the factor set on the row</h3>
+    <p>Not on the report cover. On every row. If your factor table is updated mid-year, you want each calculation to record which version of the table produced it. ClariComp does this by default.</p>
+
+    <h3>2. Carry precision through; round only at the end</h3>
+    <p>If you round each row to three decimal places of kilograms and then aggregate, you accumulate rounding error proportional to row count. Carry six decimal places through the multiplication. Round once, on the published total.</p>
+
+    <h3>3. Make assumptions explicit, not invisible</h3>
+    <p>An auditor's instinct, on seeing a clean number, is to look for the assumptions that produced it. If the assumptions are stated openly on each row ("class inferred as economy"), the assumption itself becomes the auditable artefact and the conversation is short. If the assumptions are buried in a methodology paragraph, the auditor has to find them.</p>
+
+    <h2>What this changes about your audit</h2>
+    <p>An audit-friendly Scope 3.6 number does not eliminate the audit. It changes the shape of the conversation from "explain this" to "confirm this". The first conversation is open-ended and expensive. The second is structured and cheap. Compliance Pro is built around the second.</p>
+
+    <hr class="divider" />
+
+    <div style="display:flex; gap: 12px;">
+      <a href="preview.html" class="btn btn--primary">Try the preview</a>
+      <a href="methodology.html" class="btn btn--ghost">Read the methodology page →</a>
+    </div>
+  </article>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

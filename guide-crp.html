@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>How to prepare a Carbon Reduction Plan for public tenders - ClariComp</title>
+  <meta name="description" content="What a CRP must contain under PPN 06/21, the methodology statement, and why procurement teams care about the formula trail." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <article class="article">
+    <div style="display:flex; gap: 10px; align-items: center; margin-bottom: 24px;">
+      <span class="tag">Tender compliance</span>
+      <span class="mono" style="font-size: 11px; color: var(--text-light); letter-spacing: 0.06em;">8 min read · updated April 2026</span>
+    </div>
+    <h1>How to prepare a Carbon Reduction Plan for public tenders</h1>
+    <p class="lede">Procurement Policy Note 06/21 has been in force since September 2021, but the rejection rate for CRPs from mid-sized UK contractors is still high. The reasons are consistent and fixable. Here is what your CRP needs to contain, why each element is there, and how to produce one without a sustainability team.</p>
+
+    <h2>What a CRP must contain</h2>
+    <p>PPN 06/21 is short. It asks for four things - and procurement teams check for each one when they review your bid response. They are looking, in order, for: a published Carbon Reduction Plan, a Net Zero commitment by 2050, a public verification URL, and a Director-level signature on the plan itself.</p>
+    <p>The phrase "published" is important. A PDF emailed to procurement does not count. The CRP must sit on your own website at a stable URL, accessible without login. This is the artefact procurement actually reads - your bid response simply points to it.</p>
+
+    <h3>The four required artefacts</h3>
+    <ol>
+      <li><strong style="font-weight: 500;">A published CRP document</strong> on your own domain, including current emissions broken down by scope, a stated baseline year, and a methodology paragraph.</li>
+      <li><strong style="font-weight: 500;">A Net Zero commitment</strong> with a target year (must be 2050 or earlier) and a credible trajectory connecting the baseline to the target.</li>
+      <li><strong style="font-weight: 500;">A public verification URL</strong> that procurement can visit to confirm the plan is real and current.</li>
+      <li><strong style="font-weight: 500;">A Director-level signature</strong>, dated, with printed name and role.</li>
+    </ol>
+
+    <h2>The methodology statement</h2>
+    <p>This is where most CRPs go wrong. A single paragraph in the document must state which factor set was used, how distances were calculated, what assumptions were applied when data was incomplete, and what precision was carried through the maths.</p>
+    <p>"We used DEFRA factors and Google Maps" is not a methodology statement. The version of the factor set matters. The geometry of distance calculation matters. Rounding behaviour matters. Procurement teams reviewing a £5m+ bid see hundreds of CRPs a year. They have learned which methodology statements are real and which are pasted in.</p>
+
+    <blockquote>A defensible CRP can answer: which factor table, which method, which row.</blockquote>
+
+    <p>The shortest sufficient methodology statement is something like this: <em>Emissions calculated using the UK Government 2025 GHG Conversion Factors, Table 5 (Business Travel). Aviation distance computed using the Haversine Great Circle formula. Road and rail distance computed using Google Maps Distance Matrix. All factors carried at 6 decimal places; final tonnage rounded to 3 dp. Per-row formula trail attached as Appendix C.</em></p>
+
+    <h2>Why the formula trail matters to procurement</h2>
+    <p>Procurement officers are not auditors. They cannot - and should not - verify the carbon arithmetic of every bidder. What they can do is check whether the arithmetic is checkable: does the plan show its working in a way that an auditor, if asked, could trace?</p>
+    <p>A CRP without a row-level formula trail is a CRP that has implicitly asked procurement to trust the bidder's spreadsheet. Most procurement teams have learned not to. A CRP with a per-row appendix - origin, destination, distance method, factor reference, multiplication, emission - converts trust into verifiability, and verifiability is what passes the methodology check.</p>
+
+    <h2>How to generate one using ClariComp</h2>
+    <p>The Compliance Pro tier generates all four artefacts from a single spreadsheet upload. The flow is: upload last year's travel data; ClariComp validates the file and computes per-row emissions; the CRP is generated with the methodology statement pre-filled and the formula trail appended; you configure the target year and trajectory and add a Director signature; the verification URL is issued and the PDF is published.</p>
+    <p>Total elapsed time, on a clean file, is roughly an afternoon. The bottleneck is usually getting the Director on the signature line, not anything to do with the carbon arithmetic.</p>
+
+    <h2>Where to start</h2>
+    <p>Run your existing travel spreadsheet through the <a href="preview.html">preview</a>. The output tells you, before you commit, exactly which rows are clean, which need a small fix, and what your reportable tonnage will be. If the preview reads "tender readiness: pass", you have everything you need to upgrade and generate the full plan.</p>
+
+    <hr class="divider" />
+
+    <div style="display:flex; gap: 12px;">
+      <a href="preview.html" class="btn btn--primary">Try the preview</a>
+      <a href="guide-buyers.html" class="btn btn--ghost">Read: what buyers expect →</a>
+    </div>
+  </article>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>

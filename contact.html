@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Contact - ClariComp</title>
+  <meta name="description" content="Direct email to Seyi. Calendly link for demo bookings. No sales calls. Response within 24 hours." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div id="nav"></div>
+
+  <section class="hero" style="padding: 88px 0 56px;">
+    <div class="container">
+      <div class="hero__eyebrow"><span class="dot"></span>Contact</div>
+      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">No sales calls. Just the product.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">The fastest way to evaluate ClariComp is the <a href="preview.html" style="color: var(--navy); text-decoration: underline; text-underline-offset: 3px;">preview</a>. If you need to speak to a human first, here are the routes.</p>
+    </div>
+  </section>
+
+  <section class="section section--first" style="padding-top: 24px;">
+    <div class="container">
+      <div class="grid-2" style="gap: 32px;">
+
+        <div class="card" style="padding: 40px 44px;">
+          <div class="eyebrow" style="margin-bottom: 14px;">Direct email</div>
+          <h3 style="font-size: 26px; margin-bottom: 8px; font-family: var(--sans); font-weight: 500; letter-spacing: -0.005em;"><a href="mailto:seyi@claricomp.co.uk" style="color: var(--text); text-decoration: none;">seyi@claricomp.co.uk</a></h3>
+          <p style="color: var(--text-mid); margin: 0 0 20px;">Goes to Seyi Ogunbayo, founder. Response within 24 hours, often the same day.</p>
+          <a href="mailto:seyi@claricomp.co.uk" class="btn btn--primary">Email Seyi</a>
+        </div>
+
+        <div class="card" style="padding: 40px 44px;">
+          <div class="eyebrow" style="margin-bottom: 14px;">Book a 20-minute call</div>
+          <h3 style="font-size: 26px; margin-bottom: 8px; font-family: var(--sans); font-weight: 500; letter-spacing: -0.005em;">Calendly · cal.com/seyi-claricomp</h3>
+          <p style="color: var(--text-mid); margin: 0 0 20px;">Best for: methodology questions, multi-site setup discussions, enterprise procurement queries.</p>
+          <a href="#" class="btn btn--ghost" onclick="event.preventDefault(); alert('Calendly placeholder - wire to real booking link.');">Open Calendly</a>
+        </div>
+
+      </div>
+
+      <!-- Send a message -->
+      <div style="margin-top: 64px;">
+        <div class="eyebrow" style="margin-bottom: 14px;">Or send a message</div>
+        <h2 style="margin-bottom: 28px;">A short note works too.</h2>
+
+        <form onsubmit="event.preventDefault(); document.getElementById('contact-ok').hidden = false;" style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px; max-width: 720px;">
+          <div class="field"><label for="cn-name">Your name</label><input id="cn-name" type="text" required /></div>
+          <div class="field"><label for="cn-co">Company</label><input id="cn-co" type="text" /></div>
+          <div class="field" style="grid-column: 1 / -1;"><label for="cn-email">Email</label><input id="cn-email" type="email" required /></div>
+          <div class="field" style="grid-column: 1 / -1;">
+            <label for="cn-topic">Topic</label>
+            <select id="cn-topic">
+              <option>Methodology question</option>
+              <option>Compliance / PPN 06/21</option>
+              <option>Enterprise / multi-site</option>
+              <option>Something else</option>
+            </select>
+          </div>
+          <div class="field" style="grid-column: 1 / -1;"><label for="cn-msg">Message</label><textarea id="cn-msg" rows="5" required></textarea></div>
+          <div style="grid-column: 1 / -1; display:flex; align-items: center; gap: 16px;">
+            <button type="submit" class="btn btn--primary">Send</button>
+            <span id="contact-ok" hidden style="font-family: var(--mono); font-size: 12px; color: #2f7a52; letter-spacing: 0.04em;">// SENT - placeholder; wire to backend.</span>
+          </div>
+        </form>
+      </div>
+
+      <!-- Meta -->
+      <div style="margin-top: 80px; display:grid; grid-template-columns: repeat(3, 1fr); gap: 32px; padding: 32px 0; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);">
+        <div>
+          <div class="eyebrow" style="margin-bottom: 8px;">Response time</div>
+          <div style="font-family: var(--serif); font-size: 22px;">Within 24 hours</div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom: 8px;">Where</div>
+          <div style="font-family: var(--serif); font-size: 22px;">United Kingdom</div>
+        </div>
+        <div>
+          <div class="eyebrow" style="margin-bottom: 8px;">Sales calls</div>
+          <div style="font-family: var(--serif); font-size: 22px;">No, thank you</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>
