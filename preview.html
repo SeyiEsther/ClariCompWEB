@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=1280" />
-  <title>Try the trip logger — ClariComp</title>
+  <title>Try the trip logger - ClariComp</title>
   <meta name="description" content="Log a business trip and see your carbon footprint instantly. DEFRA 2025 factors · Haversine distances · multi-leg routes supported." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -198,7 +198,7 @@
         <!-- ── Form column ──────────────────────────────────── -->
         <div>
           <div class="info-box">
-            <strong>Multi-leg routes:</strong> Use "Add stopover" to add intermediate cities. Each leg gets its own transport mode — useful for mixed journeys such as a flight then rail. Every leg is calculated separately and the full audit trail is visible.
+            <strong>Multi-leg routes:</strong> Use "Add stopover" to add intermediate cities. Each leg gets its own transport mode useful for mixed journeys such as a flight then rail. Every leg is calculated separately and the full audit trail is visible.
           </div>
 
           <div id="client-error" class="client-error"></div>
@@ -225,7 +225,7 @@
                 <div class="route-stop">
                   <div class="stop-dot stop-dot-origin">A</div>
                   <input type="text" id="origin-input" list="city-list"
-                    placeholder="Origin — e.g. London, Manchester"
+                    placeholder="Origin e.g. London, Manchester"
                     autocomplete="off" oninput="onCityInput('origin')" />
                 </div>
 
@@ -234,27 +234,27 @@
                   <span class="connector-via">via</span>
                   <select class="leg-mode-select" id="leg-mode-select-0" onchange="updatePreview()">
                     <optgroup label="Flights">
-                      <option value="Flight-Domestic">Flight — Domestic</option>
-                      <option value="Flight-ShortHaul-Economy">Flight — Short Haul Economy</option>
-                      <option value="Flight-ShortHaul-Business">Flight — Short Haul Business</option>
-                      <option value="Flight-LongHaul-Economy" selected>Flight — Long Haul Economy</option>
-                      <option value="Flight-LongHaul-Business">Flight — Long Haul Business</option>
-                      <option value="Flight-LongHaul-First">Flight — Long Haul First</option>
+                      <option value="Flight-Domestic">Flight Domestic</option>
+                      <option value="Flight-ShortHaul-Economy">Flight Short Haul Economy</option>
+                      <option value="Flight-ShortHaul-Business">Flight Short Haul Business</option>
+                      <option value="Flight-LongHaul-Economy" selected>Flight Long Haul Economy</option>
+                      <option value="Flight-LongHaul-Business">Flight Long Haul Business</option>
+                      <option value="Flight-LongHaul-First">Flight Long Haul First</option>
                     </optgroup>
                     <optgroup label="Rail">
-                      <option value="Train-National">Train — National Rail</option>
-                      <option value="Train-International">Train — International</option>
+                      <option value="Train-National">Train National Rail</option>
+                      <option value="Train-International">Train International</option>
                     </optgroup>
                     <optgroup label="Road">
-                      <option value="Car-Petrol">Car — Average Petrol</option>
-                      <option value="Car-Diesel">Car — Average Diesel</option>
-                      <option value="Car-Hybrid">Car — Average Hybrid</option>
-                      <option value="Car-Electric">Car — Average Electric</option>
+                      <option value="Car-Petrol">Car Average Petrol</option>
+                      <option value="Car-Diesel">Car Average Diesel</option>
+                      <option value="Car-Hybrid">Car Average Hybrid</option>
+                      <option value="Car-Electric">Car Average Electric</option>
                       <option value="Taxi">Taxi</option>
                     </optgroup>
                     <optgroup label="Ferry">
-                      <option value="Ferry-Foot">Ferry — Foot Passenger</option>
-                      <option value="Ferry-Car">Ferry — Car Passenger</option>
+                      <option value="Ferry-Foot">Ferry Foot Passenger</option>
+                      <option value="Ferry-Car">Ferry Car Passenger</option>
                     </optgroup>
                   </select>
                 </div>
@@ -266,7 +266,7 @@
                 <div class="route-stop" id="stop-row-dest">
                   <div class="stop-dot stop-dot-dest">B</div>
                   <input type="text" id="dest-input" list="city-list"
-                    placeholder="Destination — e.g. Dubai, Singapore"
+                    placeholder="Destination e.g. Dubai, Singapore"
                     autocomplete="off" oninput="onCityInput('dest')" />
                 </div>
 
@@ -283,7 +283,7 @@
               <input type="text" id="trip-notes" placeholder="e.g. client visit, conference, site inspection" />
             </div>
 
-            <!-- Return toggle — hidden when stopovers are present -->
+            <!-- Return toggle hidden when stopovers are present -->
             <div id="return-toggle-wrap">
               <div class="return-toggle" onclick="toggleReturn()">
                 <div id="ret-track" class="toggle-track"><div class="toggle-thumb"></div></div>
@@ -522,27 +522,27 @@
 
   const MODE_OPTIONS_HTML = `
     <optgroup label="Flights">
-      <option value="Flight-Domestic">Flight — Domestic</option>
-      <option value="Flight-ShortHaul-Economy">Flight — Short Haul Economy</option>
-      <option value="Flight-ShortHaul-Business">Flight — Short Haul Business</option>
-      <option value="Flight-LongHaul-Economy">Flight — Long Haul Economy</option>
-      <option value="Flight-LongHaul-Business">Flight — Long Haul Business</option>
-      <option value="Flight-LongHaul-First">Flight — Long Haul First</option>
+      <option value="Flight-Domestic">Flight Domestic</option>
+      <option value="Flight-ShortHaul-Economy">Flight Short Haul Economy</option>
+      <option value="Flight-ShortHaul-Business">Flight Short Haul Business</option>
+      <option value="Flight-LongHaul-Economy">Flight Long Haul Economy</option>
+      <option value="Flight-LongHaul-Business">Flight Long Haul Business</option>
+      <option value="Flight-LongHaul-First">Flight Long Haul First</option>
     </optgroup>
     <optgroup label="Rail">
-      <option value="Train-National">Train — National Rail</option>
-      <option value="Train-International">Train — International</option>
+      <option value="Train-National">Train National Rail</option>
+      <option value="Train-International">Train International</option>
     </optgroup>
     <optgroup label="Road">
-      <option value="Car-Petrol">Car — Average Petrol</option>
-      <option value="Car-Diesel">Car — Average Diesel</option>
-      <option value="Car-Hybrid">Car — Average Hybrid</option>
-      <option value="Car-Electric">Car — Average Electric</option>
+      <option value="Car-Petrol">Car Average Petrol</option>
+      <option value="Car-Diesel">Car Average Diesel</option>
+      <option value="Car-Hybrid">Car Average Hybrid</option>
+      <option value="Car-Electric">Car Average Electric</option>
       <option value="Taxi">Taxi</option>
     </optgroup>
     <optgroup label="Ferry">
-      <option value="Ferry-Foot">Ferry — Foot Passenger</option>
-      <option value="Ferry-Car">Ferry — Car Passenger</option>
+      <option value="Ferry-Foot">Ferry Foot Passenger</option>
+      <option value="Ferry-Car">Ferry Car Passenger</option>
     </optgroup>`;
 
   // ── App state ─────────────────────────────────────────────────────────────────
