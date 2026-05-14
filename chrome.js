@@ -39,6 +39,7 @@
             .map((l) => `<a href="${l.href}" class="${isActive(l.href) ? 'is-active' : ''}">${l.label}</a>`)
             .join('')}
         </div>
+        <a href="signup.html" class="nav__cta" style="margin-right:8px; background:transparent; border:1px solid var(--border); color:var(--text);">Sign up</a>
         <a href="preview.html" class="nav__cta">Try the preview</a>
       </div>
     </nav>`;

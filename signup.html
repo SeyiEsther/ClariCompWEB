@@ -1,0 +1,362 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=1280" />
+  <title>Sign up - ClariComp</title>
+  <meta name="description" content="Reserve a ClariComp workspace. 30-day Compliance Pro trial. Audit-ready carbon reporting for SECR and PPN 06/21." />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .su-page {
+      min-height: 100vh;
+      background: var(--navy);
+      display: flex;
+      flex-direction: column;
+    }
+    .su-main {
+      flex: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      max-width: 1280px;
+      margin: 0 auto;
+      width: 100%;
+      padding: 80px 48px 80px;
+      gap: 80px;
+      align-items: start;
+    }
+    .su-left {}
+    .su-eyebrow {
+      font-family: var(--mono);
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--blue-light);
+      margin-bottom: 20px;
+    }
+    .su-h1 {
+      font-family: var(--serif);
+      font-size: 52px;
+      line-height: 1.04;
+      letter-spacing: -0.02em;
+      color: var(--white);
+      margin: 0 0 24px;
+      max-width: 18ch;
+    }
+    .su-lede {
+      font-size: 17px;
+      color: var(--blue-light);
+      line-height: 1.6;
+      margin: 0 0 36px;
+      max-width: 46ch;
+    }
+    .su-checks {
+      list-style: none;
+      padding: 0;
+      margin: 0 0 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .su-checks li {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      font-size: 15px;
+      color: var(--blue-light);
+      line-height: 1.45;
+    }
+    .su-checks li .ck {
+      font-family: var(--mono);
+      color: #8fd3a8;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .su-divider {
+      border: none;
+      border-top: 1px solid rgba(227,237,245,0.12);
+      margin: 0 0 32px;
+    }
+    .su-stat-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+    .su-stat {}
+    .su-stat__n {
+      font-family: var(--serif);
+      font-size: 32px;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+    .su-stat__l {
+      font-size: 13px;
+      color: var(--blue-light);
+      line-height: 1.4;
+    }
+
+    /* Form panel */
+    .su-form-panel {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(227,237,245,0.14);
+      border-radius: var(--radius-lg);
+      padding: 40px 40px 36px;
+      backdrop-filter: blur(8px);
+      position: sticky;
+      top: 32px;
+    }
+    .su-form-panel .eyebrow {
+      color: var(--blue-light);
+      margin-bottom: 24px;
+    }
+    .su-field-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+    .su-form-panel .field {
+      margin-top: 14px;
+    }
+    .su-form-panel .field:first-child,
+    .su-field-row .field {
+      margin-top: 0;
+    }
+    .su-form-panel label {
+      color: rgba(163,195,221,0.75);
+    }
+    .su-form-panel input,
+    .su-form-panel select,
+    .su-form-panel textarea {
+      background: rgba(255,255,255,0.06);
+      border-color: rgba(227,237,245,0.18);
+      color: var(--white);
+    }
+    .su-form-panel input::placeholder {
+      color: rgba(163,195,221,0.35);
+    }
+    .su-form-panel select option {
+      background: #1e2d3d;
+      color: var(--white);
+    }
+    .su-submit {
+      background: var(--white);
+      color: var(--navy);
+      border: none;
+      width: 100%;
+      justify-content: center;
+      margin-top: 22px;
+      font-size: 15px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+    }
+    .su-submit:hover {
+      background: #e8f0f7;
+    }
+    .su-fine {
+      margin-top: 12px;
+      font-family: var(--mono);
+      font-size: 10.5px;
+      color: rgba(163,195,221,0.45);
+      letter-spacing: 0.06em;
+      text-align: center;
+    }
+    .su-ok {
+      text-align: center;
+      padding: 16px 0;
+    }
+    .su-ok__head {
+      font-family: var(--serif);
+      font-size: 28px;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+    .su-ok__body {
+      font-size: 15px;
+      color: var(--blue-light);
+      line-height: 1.55;
+    }
+    .su-ok__icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      background: rgba(143,211,168,0.15);
+      border: 1px solid rgba(143,211,168,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+      font-size: 20px;
+    }
+  </style>
+</head>
+<body style="background: var(--navy);">
+
+  <div id="nav" style="--nav-bg: rgba(22,33,46,0.95); --nav-border: rgba(227,237,245,0.1); --nav-text: rgba(163,195,221,0.7); --nav-text-active: var(--white);"></div>
+
+  <main class="su-page">
+    <div class="su-main">
+
+      <!-- Left: value proposition -->
+      <div class="su-left">
+        <div class="su-eyebrow">Early access · Compliance Pro</div>
+        <h1 class="su-h1">Reserve your ClariComp workspace.</h1>
+        <p class="su-lede">30-day full trial. Upload last year's travel spreadsheet and have a draft PPN 06/21 Carbon Reduction Plan ready by end of day.</p>
+
+        <ul class="su-checks">
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">30-day live trial</strong> with full Compliance Pro features. No card required to start.</span>
+          </li>
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">DEFRA 2025 factors applied automatically.</strong> Table 5 Business Travel, 6 decimal places, versioned per row.</span>
+          </li>
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">Full formula trail</strong> for every entry. Distance, factor, formula, result. Auditor-ready on demand.</span>
+          </li>
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">PPN 06/21 Carbon Reduction Plan</strong> in one click. Director signature block and public verification URL included.</span>
+          </li>
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">Onboarding call with Seyi</strong> — no slides. Bring your current spreadsheet.</span>
+          </li>
+          <li>
+            <span class="ck">✓</span>
+            <span><strong style="color:var(--white); font-weight:500;">Carry-over to live logging</strong> when the trial ends. Your data stays.</span>
+          </li>
+        </ul>
+
+        <hr class="su-divider" />
+
+        <div class="su-stat-row">
+          <div class="su-stat">
+            <div class="su-stat__n">£450<span style="font-family:var(--mono);font-size:14px;color:var(--blue-light);">/mo</span></div>
+            <div class="su-stat__l">After trial. No annual lock-in.</div>
+          </div>
+          <div class="su-stat">
+            <div class="su-stat__n">24 hr</div>
+            <div class="su-stat__l">From spreadsheet to draft SECR report.</div>
+          </div>
+          <div class="su-stat">
+            <div class="su-stat__n">0</div>
+            <div class="su-stat__l">Manual factor lookups. Ever.</div>
+          </div>
+        </div>
+
+        <div style="margin-top: 40px; padding: 24px 28px; background: rgba(255,255,255,0.03); border: 1px solid rgba(227,237,245,0.1); border-radius: 10px;">
+          <div style="font-family: var(--mono); font-size: 10px; letter-spacing: 0.12em; color: var(--blue-light); text-transform: uppercase; margin-bottom: 10px;">What happens after you sign up</div>
+          <ol style="padding: 0; margin: 0; list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: steps;">
+            <li style="display: flex; gap: 12px; font-size: 14px; color: var(--blue-light); counter-increment: steps;">
+              <span style="font-family:var(--mono); color: rgba(163,195,221,0.4); flex-shrink:0; font-size:11px; padding-top:2px;">01</span>
+              Seyi reviews your submission and sends workspace access within 24 hours.
+            </li>
+            <li style="display: flex; gap: 12px; font-size: 14px; color: var(--blue-light); counter-increment: steps;">
+              <span style="font-family:var(--mono); color: rgba(163,195,221,0.4); flex-shrink:0; font-size:11px; padding-top:2px;">02</span>
+              30-minute onboarding call. Bring your current travel spreadsheet or expense export.
+            </li>
+            <li style="display: flex; gap: 12px; font-size: 14px; color: var(--blue-light); counter-increment: steps;">
+              <span style="font-family:var(--mono); color: rgba(163,195,221,0.4); flex-shrink:0; font-size:11px; padding-top:2px;">03</span>
+              Upload your data. ClariComp processes it and generates your first DEFRA report.
+            </li>
+            <li style="display: flex; gap: 12px; font-size: 14px; color: var(--blue-light); counter-increment: steps;">
+              <span style="font-family:var(--mono); color: rgba(163,195,221,0.4); flex-shrink:0; font-size:11px; padding-top:2px;">04</span>
+              Export your PPN 06/21 Carbon Reduction Plan or SECR appendix when ready.
+            </li>
+          </ol>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div>
+        <form class="su-form-panel" id="su-form"
+          onsubmit="event.preventDefault(); document.getElementById('su-form').hidden=true; document.getElementById('su-ok').hidden=false;">
+
+          <div class="eyebrow">Reserve your workspace</div>
+
+          <div class="su-field-row">
+            <div class="field">
+              <label for="su-name">Your name</label>
+              <input id="su-name" type="text" placeholder="Jane Smith" required />
+            </div>
+            <div class="field">
+              <label for="su-role">Role</label>
+              <select id="su-role">
+                <option>Finance Director / Controller</option>
+                <option>Bid / Tender Manager</option>
+                <option>Operations Director</option>
+                <option>HSE / Compliance Manager</option>
+                <option>Procurement Manager</option>
+                <option>Office / Admin Manager</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field">
+            <label for="su-co">Company name</label>
+            <input id="su-co" type="text" placeholder="Northgate Manufacturing Ltd" required />
+          </div>
+
+          <div class="field">
+            <label for="su-email">Work email</label>
+            <input id="su-email" type="email" placeholder="jane@northgate.co.uk" required />
+          </div>
+
+          <div class="su-field-row" style="margin-top:14px;">
+            <div class="field">
+              <label for="su-size">Headcount</label>
+              <select id="su-size">
+                <option>Under 100</option>
+                <option>100 - 250</option>
+                <option selected>250 - 500</option>
+                <option>500 - 1,000</option>
+                <option>1,000+</option>
+              </select>
+            </div>
+            <div class="field">
+              <label for="su-sector">Sector</label>
+              <select id="su-sector">
+                <option>Manufacturing</option>
+                <option>Construction</option>
+                <option>Engineering</option>
+                <option>Professional services</option>
+                <option>Public sector</option>
+                <option>Other</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="field" style="margin-top:14px;">
+            <label for="su-context">What are you working towards? <span style="color:rgba(163,195,221,0.4); font-size:11px;">(optional)</span></label>
+            <textarea id="su-context" rows="3" placeholder="e.g. SECR filing due Q1, bidding on a PPN 06/21 contract, want to move off spreadsheets..." style="background:rgba(255,255,255,0.06); border-color:rgba(227,237,245,0.18); color:var(--white); resize:vertical; font-family:var(--sans); font-size:14px; padding:10px 12px; width:100%; box-sizing:border-box; border-radius:6px; border-width:1px; border-style:solid;"></textarea>
+          </div>
+
+          <button type="submit" class="btn btn--lg su-submit">Reserve workspace →</button>
+          <div class="su-fine">No card · 30-day trial · cancel any time</div>
+        </form>
+
+        <div id="su-ok" class="su-form-panel su-ok" hidden>
+          <div class="su-ok__icon">✓</div>
+          <div class="su-ok__head">Workspace reserved.</div>
+          <div class="su-ok__body">Check your inbox — Seyi will follow up within 24 hours with onboarding access and a calendar link.</div>
+          <div style="margin-top:28px; padding-top:20px; border-top:1px solid rgba(227,237,245,0.1); font-family:var(--mono); font-size:10.5px; color:rgba(163,195,221,0.4); letter-spacing:0.06em;">In the meantime, try the interactive trip logger to see the DEFRA calculations.</div>
+          <a href="preview.html" class="btn btn--ghost" style="margin-top:14px; color:var(--blue-light); border-color:rgba(227,237,245,0.2); width:100%; justify-content:center;">Try the preview →</a>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <div id="footer"></div>
+  <script src="chrome.js"></script>
+</body>
+</html>
