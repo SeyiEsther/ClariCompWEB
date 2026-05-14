@@ -663,6 +663,20 @@
     return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
   }
 
+  // ── OSRM road routing ─────────────────────────────────────────────────────────
+  // Used for car/taxi modes. Falls back to Haversine if the request fails.
+  async function routeByRoad(c1, c2) {
+    const url = `https://router.project-osrm.org/route/v1/driving/${c1.lng},${c1.lat};${c2.lng},${c2.lat}?overview=false`;
+    try {
+      const res = await fetch(url, { signal: AbortSignal.timeout(6000) });
+      if (!res.ok) return null;
+      const data = await res.json();
+      if (data.code === 'Ok' && data.routes?.length)
+        return Math.round(data.routes[0].distance / 1000);
+    } catch (e) {}
+    return null;
+  }
+
   // ── Canvas route map ──────────────────────────────────────────────────────────
   function drawCanvas(cities) {
     const canvas = document.getElementById('route-canvas');
@@ -859,17 +873,35 @@
   };
 
   // ── Per-leg emission engine ────────────────────────────────────────────────
-  // All distances via Haversine great circle (km).
-  // Flights: auto-classify haul by distance so the correct DEFRA factor applies.
+  // Car/Taxi: OSRM road routing for actual road distance; fallback to Haversine.
+  // Flights: Haversine great circle (correct for air travel).
+  // Rail/Ferry: Haversine straight-line (best available without a transit routing API).
+  // Flights auto-classify haul by distance so the correct DEFRA factor applies.
   //   <= 500 km  → Domestic
   //   <= 3700 km → Short Haul (preserves Economy/Business class)
   //   >  3700 km → Long Haul  (preserves Economy/Business/First class)
   // Road/ferry modes: factor is per vehicle-km (vkm); total = dist × EF regardless
-  //   of passenger count (one vehicle emits that amount). Per-person = total ÷ pax.
+  //   of passenger count. Per-person = total ÷ pax.
   // All other modes: factor is per passenger-km (pkm); total = dist × EF × pax.
-  function calcLeg(c1, c2, modeKey, pax) {
+  const ROAD_ROUTED = new Set(['Car-Petrol','Car-Diesel','Car-Hybrid','Car-Electric','Taxi']);
+
+  async function calcLeg(c1, c2, modeKey, pax) {
     if (!c1 || !c2) return null;
-    const dist = haversine(c1, c2);
+
+    let dist, distMethod;
+    if (ROAD_ROUTED.has(modeKey)) {
+      const roadDist = await routeByRoad(c1, c2);
+      if (roadDist !== null) {
+        dist = roadDist;
+        distMethod = 'OSRM road routing';
+      } else {
+        dist = haversine(c1, c2);
+        distMethod = 'Haversine estimate (road routing unavailable)';
+      }
+    } else {
+      dist = haversine(c1, c2);
+      distMethod = modeKey.startsWith('Flight') ? 'Haversine great circle' : 'Haversine straight-line';
+    }
 
     let mode = modeKey;
     if (modeKey.startsWith('Flight')) {
@@ -888,14 +920,35 @@
     const totalKg  = isVkm ? dist * ef             : dist * ef * pax;
     const perPaxKg = isVkm ? dist * ef / Math.max(1, pax) : dist * ef;
 
-    return { dist, mode, ef, isVkm, totalKg, perPaxKg, autoClassified: mode !== modeKey };
+    return { dist, distMethod, mode, ef, isVkm, totalKg, perPaxKg, autoClassified: mode !== modeKey };
   }
 
   // ── Preview update ────────────────────────────────────────────────────────────
+  let _updateTimer = null;
+
+  // Public entry point — debounced so rapid input changes don't hammer OSRM.
   function updatePreview() {
+    clearTimeout(_updateTimer);
+    _updateTimer = setTimeout(_doUpdate, 300);
+  }
+
+  async function _doUpdate() {
     const allCities   = [resolvedCities.origin, ...midStops.map(s => s.city), resolvedCities.dest];
     const modeSelects = getAllModeSelects();
     const pax = Math.max(1, parseInt(document.getElementById('passengers').value) || 1);
+
+    // Show "calculating" state while async routing calls are in flight.
+    const needsRouting = modeSelects.some(sel => sel && ROAD_ROUTED.has(sel.value));
+    if (needsRouting) {
+      document.getElementById('em-total').textContent = '…';
+      document.getElementById('em-preview').style.display = 'flex';
+    }
+
+    // Kick off all leg calculations in parallel.
+    const legCalcs = modeSelects.map((_, i) =>
+      calcLeg(allCities[i], allCities[i + 1], modeSelects[i]?.value || '', pax)
+    );
+    const legResults = await Promise.all(legCalcs);
 
     let totalDist = 0, totalKg = 0;
     const legs = [];
@@ -906,7 +959,7 @@
       const modeKey = modeSelects[i]?.value || '';
       const from    = c1?.name || (i === 0 ? document.getElementById('origin-input').value : `Stop ${i}`);
       const to      = c2?.name || (i + 1 === allCities.length - 1 ? document.getElementById('dest-input').value : `Stop ${i+1}`);
-      const result  = calcLeg(c1, c2, modeKey, pax);
+      const result  = legResults[i];
 
       if (result) {
         totalDist += result.dist;
@@ -956,7 +1009,7 @@
           <div class="trail-row">
             <span class="trail-k">Distance</span>
             <span class="trail-v">${l.dist.toLocaleString()} km</span>
-            <span class="trail-note">Haversine great circle</span>
+            <span class="trail-note">${l.distMethod}</span>
           </div>
           <div class="trail-row">
             <span class="trail-k">Mode</span>
