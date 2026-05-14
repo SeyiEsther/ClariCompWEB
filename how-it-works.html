@@ -3,12 +3,80 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=1280" />
-  <title>How ClariComp works - six steps from spreadsheet to signed report</title>
-  <meta name="description" content="From CSV upload to a signed PPN 06/21 Carbon Reduction Plan: six steps, no sustainability team required." />
+  <title>How ClariComp works - five steps from trip to signed report</title>
+  <meta name="description" content="Employee logs the trip. Distance calculated automatically. DEFRA 2025 factor applied. Formula stored permanently. Report generated on demand." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* Step layout: number col | text col | data card col */
+    .step-row {
+      display: grid;
+      grid-template-columns: 220px 1fr 360px;
+      gap: 0;
+      border-top: 1px solid var(--border);
+      align-items: start;
+    }
+    .step-num {
+      padding: 44px 0 44px 0;
+    }
+    .step-body {
+      padding: 44px 48px 44px 48px;
+      border-left: 1px solid var(--border);
+    }
+    .step-card {
+      padding: 44px 0 44px 32px;
+      border-left: 1px solid var(--border);
+    }
+
+    /* Data card — dark panel */
+    .data-card {
+      background: var(--navy);
+      border-radius: var(--radius-lg);
+      padding: 20px 22px;
+      font-family: var(--mono);
+      font-size: 12px;
+      line-height: 1;
+    }
+    .data-card__title {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--mid);
+      margin-bottom: 16px;
+    }
+    .data-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      padding: 8px 0;
+      border-top: 1px solid rgba(227,237,245,0.08);
+    }
+    .data-row:first-of-type { border-top: none; }
+    .data-key   { color: var(--mid); white-space: nowrap; flex-shrink: 0; }
+    .data-val   { color: var(--white); text-align: right; }
+    .data-val--green { color: #4ade80; }
+    .data-val--ok    { color: #86efac; }
+    .data-divider {
+      border: none;
+      border-top: 1px solid rgba(227,237,245,0.14);
+      margin: 10px 0;
+    }
+
+    /* Input preview inside step 01 card */
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      padding: 7px 0;
+      border-top: 1px solid rgba(227,237,245,0.08);
+    }
+    .input-row:first-of-type { border-top: none; }
+    .input-label { font-size: 10px; color: var(--mid); text-transform: uppercase; letter-spacing: 0.1em; }
+    .input-value { font-size: 13px; color: var(--white); margin-top: 3px; }
+  </style>
 </head>
 <body>
   <div id="nav"></div>
@@ -16,87 +84,205 @@
   <section class="hero" style="padding: 88px 0 56px;">
     <div class="container">
       <div class="hero__eyebrow"><span class="dot"></span>How it works</div>
-      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">From a spreadsheet to a signed report - in six steps.</h1>
-      <p class="hero__lede" style="margin-bottom: 0;">Every step is self-serve. The product runs in the browser. The only conversation you'll have with ClariComp is the one you choose to have.</p>
+      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">Five steps. From trip to signed report.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">Every step is handled by ClariComp. Every calculation is traceable. The output is a document you can hand to a procurement officer or an auditor without a covering explanation.</p>
     </div>
   </section>
 
-  <section class="section section--first" style="padding-top: 24px;">
+  <section class="section section--first" style="padding-top: 0; padding-bottom: 0;">
     <div class="container">
-      <!-- Step list -->
-      <div style="display:grid; grid-template-columns: 220px 1fr; gap: 0; border-top: 1px solid var(--border);">
 
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 01 · UPLOAD</div>
+      <!-- ── Step 01 ── -->
+      <div class="step-row">
+        <div class="step-num">
+          <div class="eyebrow">Step 01 · LOG</div>
         </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">Drop in last year's travel spreadsheet.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">ClariComp accepts CSV and XLSX, any column order. The header-matching step happens automatically: <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">trip_date</span>, <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">from_address</span>, <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">to_address</span>, <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">transport_mode</span>, <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">user_name</span>. Distance is computed if missing.</p>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px; margin-top: 8px;">Files over 50 MB or with mixed reporting periods are rejected at the door. ClariComp only accepts last-year data - this is intentional, and explained on the methodology page.</p>
+        <div class="step-body">
+          <h2 style="font-size: 34px; margin-bottom: 14px;">Employee logs the trip.</h2>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65;">Takes 45 seconds. Origin, destination, transport mode, date. Google Places Autocomplete ensures clean location data. No free-text. No ambiguity.</p>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65; margin-top: 0;">Employees log at source — immediately after the trip — so data is accurate rather than reconstructed weeks later from a credit card statement.</p>
         </div>
-
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 02 · VALIDATE</div>
-        </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">ClariComp tells you what's missing - before processing.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">Required columns are checked first. Completeness is scored per row. If 12% of your trips are missing destinations, you'll see that before a single emission is calculated.</p>
-          <div style="display:grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 22px; max-width: 720px;">
-            <div class="state state--ok"><span class="state__dot"></span><div><div class="state__title">Valid</div><div class="state__body">312 rows ready</div></div></div>
-            <div class="state state--warn"><span class="state__dot"></span><div><div class="state__title">Partial</div><div class="state__body">8 rows missing mode</div></div></div>
-            <div class="state state--err"><span class="state__dot"></span><div><div class="state__title">Rejected</div><div class="state__body">Current-year data</div></div></div>
+        <div class="step-card">
+          <div class="data-card">
+            <div class="data-card__title">Trip entry</div>
+            <div class="input-row">
+              <div class="input-label">Origin</div>
+              <div class="input-value">Manchester</div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">Destination</div>
+              <div class="input-value">London Heathrow</div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">Mode</div>
+              <div class="input-value">Flight-Domestic</div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">Date</div>
+              <div class="input-value">14 Mar 2025</div>
+            </div>
+            <div class="input-row">
+              <div class="input-label">Passengers</div>
+              <div class="input-value">1</div>
+            </div>
           </div>
         </div>
-
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 03 · COMPUTE</div>
-        </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">Distance + factor + multiplication. Visible for every row.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">Flights run through <span class="mono" style="background: var(--white); padding: 2px 6px; border-radius: 3px; font-size: 13px;">Haversine Great Circle</span>. Road and rail run through Distance Matrix. The DEFRA 2025 factor is selected from Table 5 by mode, fuel and class - to six decimal places.</p>
-          <div class="formula" style="margin-top: 22px; max-width: 720px;">
-<pre style="margin: 0; white-space: pre-wrap; font-family: var(--mono); font-size: 12.5px; line-height: 1.7;"><span class="c">// Haversine Great Circle</span>
-<span class="k">d</span> = 2r · asin(√(sin²(Δφ/2) + cos φ₁ · cos φ₂ · sin²(Δλ/2)))
-
-<span class="c">// DEFRA 2025 Table 5 · row lookup</span>
-<span class="k">f</span> = passenger.air.short_haul.economy = <span class="v">0.151378</span> kgCO₂e/pkm
-
-<span class="c">// Emission</span>
-<span class="k">e</span> = d × f</pre>
-          </div>
-        </div>
-
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 04 · REVIEW</div>
-        </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">A preview dashboard - not a sales pitch.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">Total tonnes. Breakdown by mode. Top-five hottest routes. Data quality score. Tender-readiness rating. Preview PDF download - clearly labelled as indicative.</p>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px; margin-top: 8px;">The preview is the same calculation engine as the paid product. The difference is what you can do with the output, not the integrity of the numbers.</p>
-        </div>
-
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 05 · SIGN</div>
-        </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">Director signature, public verification URL, factor-set stamp.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">Compliance Pro generates the signature block and the immutable URL your tender submission can point to. The factor-set version is stamped into the document and into every row - so an auditor checking your file in 2027 can see exactly which DEFRA table produced which number.</p>
-        </div>
-
-        <div style="padding: 36px 0; border-bottom: 1px solid var(--border);">
-          <div class="eyebrow">Step 06 · EXPORT</div>
-        </div>
-        <div style="padding: 36px 0 36px 48px; border-bottom: 1px solid var(--border); border-left: 1px solid var(--border);">
-          <h2 style="font-size: 34px; margin-bottom: 12px;">Download or generate your report.</h2>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px;">There are two outputs. The <strong style="font-weight: 500; color: var(--text);">indicative preview PDF</strong> is free, generated on every upload, and clearly labelled as such. The <strong style="font-weight: 500; color: var(--text);">Compliance Pro output</strong> is the full SECR annual report and the PPN 06/21 Carbon Reduction Plan, with the formula trail appendix and the verification URL.</p>
-          <p style="max-width: 60ch; color: var(--text-mid); font-size: 16px; margin-top: 8px;">Same calculations. Different artefacts. <a href="sample-report.html" style="color: var(--navy); text-decoration: underline; text-underline-offset: 3px;">See a sample report →</a></p>
-        </div>
-
       </div>
+
+      <!-- ── Step 02 ── -->
+      <div class="step-row">
+        <div class="step-num">
+          <div class="eyebrow">Step 02 · DISTANCE</div>
+        </div>
+        <div class="step-body">
+          <h2 style="font-size: 34px; margin-bottom: 14px;">Distance calculated automatically.</h2>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65;">ClariComp applies the correct distance methodology for the transport mode. No manual lookups. No Google Maps estimates being used where Haversine is required.</p>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65; margin-top: 0;">For flights: <strong style="color: var(--text); font-weight: 500;">Haversine Great Circle</strong> — the methodology explicitly required by DEFRA for air travel emissions. For road and rail: <strong style="color: var(--text); font-weight: 500;">Google Maps Distance Matrix</strong> for actual route distance.</p>
+        </div>
+        <div class="step-card">
+          <div class="data-card">
+            <div class="data-card__title">Distance calculation</div>
+            <div class="data-row">
+              <span class="data-key">Methodology</span>
+              <span class="data-val">Haversine Great Circle</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Manchester coords</span>
+              <span class="data-val">53.3498°N 2.2744°W</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">London coords</span>
+              <span class="data-val">51.4775°N 0.4614°W</span>
+            </div>
+            <hr class="data-divider" />
+            <div class="data-row">
+              <span class="data-key">Distance</span>
+              <span class="data-val">267.2 km one way</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Total distance</span>
+              <span class="data-val data-val--green">534 km return</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 03 ── -->
+      <div class="step-row">
+        <div class="step-num">
+          <div class="eyebrow">Step 03 · FACTOR</div>
+        </div>
+        <div class="step-body">
+          <h2 style="font-size: 34px; margin-bottom: 14px;">DEFRA 2025 factor applied.</h2>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65;">ClariComp holds the complete DEFRA 2025 GHG Conversion Factor table. The correct factor for the transport mode and travel class is retrieved and applied automatically.</p>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65; margin-top: 0;">Not an estimate. Not a rounded figure. The exact published DEFRA factor to six decimal places — the level of precision required for a defensible statutory filing.</p>
+        </div>
+        <div class="step-card">
+          <div class="data-card">
+            <div class="data-card__title">Factor lookup</div>
+            <div class="data-row">
+              <span class="data-key">Transport mode</span>
+              <span class="data-val">Flight-Domestic</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">DEFRA 2025 factor</span>
+              <span class="data-val data-val--green">0.255133 kgCO₂e/km</span>
+            </div>
+            <hr class="data-divider" />
+            <div class="data-row">
+              <span class="data-key">Source</span>
+              <span class="data-val">DEFRA Table 5 2025</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Factor year</span>
+              <span class="data-val data-val--ok">2025 (current)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 04 ── -->
+      <div class="step-row">
+        <div class="step-num">
+          <div class="eyebrow">Step 04 · FORMULA</div>
+        </div>
+        <div class="step-body">
+          <h2 style="font-size: 34px; margin-bottom: 14px;">Formula stored permanently.</h2>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65;">The complete calculation is stored against the trip entry. Distance. Factor. Passengers. Result. Every variable. Every step. Immutable — it cannot be edited after saving.</p>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65; margin-top: 0;">This is the formula trail. This is what makes ClariComp audit-ready rather than just a calculator.</p>
+        </div>
+        <div class="step-card">
+          <div class="data-card">
+            <div class="data-card__title">Stored formula</div>
+            <div class="data-row">
+              <span class="data-key">Formula</span>
+              <span class="data-val">d × ef × p</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Calculation</span>
+              <span class="data-val">534 × 0.255133 × 1</span>
+            </div>
+            <hr class="data-divider" />
+            <div class="data-row">
+              <span class="data-key">Result</span>
+              <span class="data-val data-val--green">136.24 kgCO₂e</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">In tCO₂e</span>
+              <span class="data-val data-val--green">0.136 tCO₂e</span>
+            </div>
+            <hr class="data-divider" />
+            <div class="data-row">
+              <span class="data-key">Stored at</span>
+              <span class="data-val" style="color: var(--mid);">14 Mar 2025 09:42 UTC</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── Step 05 ── -->
+      <div class="step-row" style="border-bottom: 1px solid var(--border);">
+        <div class="step-num">
+          <div class="eyebrow">Step 05 · REPORT</div>
+        </div>
+        <div class="step-body">
+          <h2 style="font-size: 34px; margin-bottom: 14px;">Report generated on demand.</h2>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65;">At any point — year-end, tender deadline, auditor request — generate your SECR report or PPN 06/21 Carbon Reduction Plan. One click.</p>
+          <p style="max-width: 54ch; color: var(--text-mid); font-size: 16px; line-height: 1.65; margin-top: 0;">The PDF includes your total tCO₂e baseline, scope breakdown, DEFRA badge, Net Zero commitment, Director signature block, and a complete formula trail appendix showing every single trip calculation.</p>
+          <a href="sample-report.html" style="display: inline-block; margin-top: 8px; font-family: var(--mono); font-size: 12px; color: var(--navy); letter-spacing: 0.04em; text-decoration: underline; text-underline-offset: 3px;">See a sample report →</a>
+        </div>
+        <div class="step-card">
+          <div class="data-card">
+            <div class="data-card__title">Report output</div>
+            <div class="data-row">
+              <span class="data-key">Output type</span>
+              <span class="data-val">PDF · CSV · JSON</span>
+            </div>
+            <hr class="data-divider" />
+            <div class="data-row">
+              <span class="data-key">SECR compliant</span>
+              <span class="data-val data-val--ok">✓ Yes</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">PPN 06/21 compliant</span>
+              <span class="data-val data-val--ok">✓ Yes</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Public URL</span>
+              <span class="data-val data-val--ok">✓ Included</span>
+            </div>
+            <div class="data-row">
+              <span class="data-key">Formula appendix</span>
+              <span class="data-val data-val--ok">✓ Every entry</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
     </div>
   </section>
 
-  <!-- DEFRA factor table preview -->
+  <!-- DEFRA factor table -->
   <section class="section section--mute">
     <div class="container">
       <div class="row-split" style="margin-bottom: 36px;">
@@ -118,12 +304,12 @@
           </tr>
         </thead>
         <tbody>
-          <tr><td>Air - domestic</td><td>Average passenger</td><td>pkm</td><td class="num">0.246550</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-D</td></tr>
-          <tr><td>Air - short-haul</td><td>Economy</td><td>pkm</td><td class="num">0.151378</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-SH-E</td></tr>
-          <tr><td>Air - long-haul</td><td>Economy</td><td>pkm</td><td class="num">0.148040</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-LH-E</td></tr>
-          <tr><td>Rail - national</td><td>-</td><td>pkm</td><td class="num">0.035463</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-RAIL-NAT</td></tr>
-          <tr><td>Rail - Eurostar</td><td>-</td><td>pkm</td><td class="num">0.004426</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-RAIL-EUR</td></tr>
-          <tr><td>Car - average</td><td>Unknown fuel</td><td>vkm</td><td class="num">0.168350</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-CAR-AVG</td></tr>
+          <tr><td>Air – domestic</td><td>Average passenger</td><td>pkm</td><td class="num">0.246550</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-D</td></tr>
+          <tr><td>Air – short-haul</td><td>Economy</td><td>pkm</td><td class="num">0.151378</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-SH-E</td></tr>
+          <tr><td>Air – long-haul</td><td>Economy</td><td>pkm</td><td class="num">0.148040</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-AIR-LH-E</td></tr>
+          <tr><td>Rail – national</td><td>–</td><td>pkm</td><td class="num">0.035463</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-RAIL-NAT</td></tr>
+          <tr><td>Rail – Eurostar</td><td>–</td><td>pkm</td><td class="num">0.004426</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-RAIL-EUR</td></tr>
+          <tr><td>Car – average</td><td>Unknown fuel</td><td>vkm</td><td class="num">0.168350</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-CAR-AVG</td></tr>
           <tr><td>Taxi</td><td>Regular</td><td>vkm</td><td class="num">0.148790</td><td class="mono" style="font-size: 12px; color: var(--text-mid);">2025 · T5 · BT-TAXI</td></tr>
         </tbody>
       </table>
@@ -133,8 +319,8 @@
   <!-- CTA -->
   <section class="section section--dark">
     <div class="container" style="text-align: center;">
-      <h2 style="font-size: 48px; max-width: 22ch; margin: 0 auto 14px;">Six steps. One spreadsheet. A report you can sign.</h2>
-      <p style="font-size: 17px; color: var(--blue-light); max-width: 50ch; margin: 0 auto 28px;">Start with the preview. No login. No sales call.</p>
+      <h2 style="font-size: 48px; max-width: 22ch; margin: 0 auto 14px;">Five steps. One source of truth. A report you can sign.</h2>
+      <p style="font-size: 17px; color: var(--blue-light); max-width: 50ch; margin: 0 auto 28px;">Try the trip logger. See the calculation. No login. No sales call.</p>
       <a href="preview.html" class="btn btn--lg" style="background: var(--white); color: var(--navy);">Try the preview</a>
     </div>
   </section>
