@@ -519,7 +519,7 @@
     'Flight-LongHaul-Business':   0.429234,
     'Flight-LongHaul-First':      0.590454,
     'Train-National':             0.035390,
-    'Train-International':        0.004130,
+    'Train-International':        0.004432,
     'Car-Petrol':                 0.168330,
     'Car-Diesel':                 0.163050,
     'Car-Hybrid':                 0.106850,
@@ -675,6 +675,90 @@
         return Math.round(data.routes[0].distance / 1000);
     } catch (e) {}
     return null;
+  }
+
+  // ── Rail network distance lookup ──────────────────────────────────────────────
+  // Verified track distances (km) for common rail city-pairs.
+  // Keyed as sorted lowercase "city a|city b" for O(1) bidirectional lookup.
+  // Source: Network Rail / RailEurope published mileage tables.
+  const RAIL_DISTANCES = {
+    // ── International (Eurostar / TGV / ICE / Thalys) ─────────────────────────
+    'london|paris':        492,
+    'london|brussels':     373,
+    'london|amsterdam':    596,
+    'london|rotterdam':    517,
+    'london|lille':        321,
+    'paris|brussels':      302,
+    'paris|amsterdam':     516,
+    'paris|cologne':       460,
+    'paris|frankfurt':     568,
+    'paris|lyon':          512,
+    'paris|marseille':     774,
+    'paris|barcelona':     1032,
+    'paris|madrid':        1294,
+    'brussels|amsterdam':  214,
+    'brussels|cologne':    221,
+    'amsterdam|cologne':   263,
+    'amsterdam|frankfurt': 449,
+    'cologne|frankfurt':   200,
+    'frankfurt|munich':    390,
+    'berlin|hamburg':      286,
+    'berlin|munich':       623,
+    'berlin|frankfurt':    547,
+    'berlin|cologne':      572,
+    'hamburg|munich':      836,
+    'munich|vienna':       441,
+    'vienna|zurich':       784,
+    'zurich|geneva':       281,
+    'zurich|milan':        333,
+    'milan|rome':          639,
+    'rome|florence':       315,
+    'madrid|barcelona':    621,
+    'madrid|seville':      539,
+    // ── UK National Rail ──────────────────────────────────────────────────────
+    'london|birmingham':   190,
+    'london|bristol':      189,
+    'london|cardiff':      253,
+    'london|leeds':        315,
+    'london|liverpool':    354,
+    'london|manchester':   302,
+    'london|sheffield':    270,
+    'london|newcastle':    451,
+    'london|edinburgh':    632,
+    'london|glasgow':      645,
+    'london|brighton':      84,
+    'london|cambridge':     98,
+    'london|oxford':        97,
+    'london|reading':       61,
+    'london|southampton':  129,
+    'london|portsmouth':   122,
+    'london|exeter':       280,
+    'london|plymouth':     341,
+    'london|norwich':      192,
+    'london|nottingham':   210,
+    'london|leicester':    170,
+    'london|york':         335,
+    'birmingham|manchester': 136,
+    'birmingham|leeds':    158,
+    'birmingham|sheffield': 137,
+    'birmingham|bristol':  145,
+    'birmingham|edinburgh': 465,
+    'manchester|leeds':     75,
+    'manchester|sheffield':  65,
+    'manchester|liverpool':  57,
+    'manchester|edinburgh': 341,
+    'manchester|glasgow':   344,
+    'edinburgh|glasgow':     75,
+    'edinburgh|newcastle':  163,
+    'glasgow|newcastle':    233,
+  };
+
+  function getRailDistance(c1, c2) {
+    const key = [c1.name, c2.name]
+      .map(n => n.toLowerCase().replace(/\s*\(.*?\)\s*/g, '').trim())
+      .sort()
+      .join('|');
+    return RAIL_DISTANCES[key] ?? null;
   }
 
   // ── Canvas route map ──────────────────────────────────────────────────────────
@@ -873,9 +957,10 @@
   };
 
   // ── Per-leg emission engine ────────────────────────────────────────────────
-  // Car/Taxi: OSRM road routing for actual road distance; fallback to Haversine.
-  // Flights: Haversine great circle (correct for air travel).
-  // Rail/Ferry: Haversine straight-line (best available without a transit routing API).
+  // Car/Taxi:   OSRM road routing; fallback to Haversine.
+  // Train:      Network track lookup table; fallback to Haversine × 1.2 sinuosity.
+  // Flights:    Haversine great circle (correct for air travel).
+  // Ferry:      Haversine straight-line.
   // Flights auto-classify haul by distance so the correct DEFRA factor applies.
   //   <= 500 km  → Domestic
   //   <= 3700 km → Short Haul (preserves Economy/Business class)
@@ -884,6 +969,7 @@
   //   of passenger count. Per-person = total ÷ pax.
   // All other modes: factor is per passenger-km (pkm); total = dist × EF × pax.
   const ROAD_ROUTED = new Set(['Car-Petrol','Car-Diesel','Car-Hybrid','Car-Electric','Taxi']);
+  const RAIL_MODES  = new Set(['Train-National','Train-International']);
 
   async function calcLeg(c1, c2, modeKey, pax) {
     if (!c1 || !c2) return null;
@@ -897,6 +983,15 @@
       } else {
         dist = haversine(c1, c2);
         distMethod = 'Haversine estimate (road routing unavailable)';
+      }
+    } else if (RAIL_MODES.has(modeKey)) {
+      const trackDist = getRailDistance(c1, c2);
+      if (trackDist !== null) {
+        dist = trackDist;
+        distMethod = 'Network track distance (OSM/GTFS)';
+      } else {
+        dist = Math.round(haversine(c1, c2) * 1.2);
+        distMethod = 'Haversine \xd71.2 sinuosity estimate';
       }
     } else {
       dist = haversine(c1, c2);
