@@ -3,219 +3,949 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=1280" />
-  <title>Try the preview - ClariComp</title>
-  <meta name="description" content="Upload last year's travel spreadsheet. ClariComp returns a carbon preview in the browser. No login. No sales call." />
+  <title>Try the trip logger — ClariComp</title>
+  <meta name="description" content="Log a business trip and see your carbon footprint instantly. DEFRA 2025 factors · Haversine distances · multi-leg routes supported." />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:opsz,wght@9..40,300..700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
   <link rel="stylesheet" href="styles.css" />
+  <style>
+    /* ── Trip logger page ───────────────────────────────────────────── */
+    .log-layout {
+      display: grid;
+      grid-template-columns: 500px 1fr;
+      gap: 32px;
+      align-items: start;
+    }
+    .log-map-col { position: sticky; top: 96px; }
+
+    /* Route builder */
+    .route-builder { display: flex; flex-direction: column; position: relative; }
+    .route-stop    { display: flex; align-items: center; gap: 10px; }
+
+    .stop-dot {
+      width: 28px; height: 28px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 11px; font-weight: 700; flex-shrink: 0;
+      border: 2px solid; font-family: var(--mono); letter-spacing: 0;
+    }
+    .stop-dot-origin { background: rgba(47,122,82,0.12); border-color: #2f7a52;             color: #2f7a52; }
+    .stop-dot-via    { background: rgba(84,108,123,0.12); border-color: var(--mid);          color: var(--mid); }
+    .stop-dot-dest   { background: rgba(161,58,58,0.10); border-color: rgba(161,58,58,0.5); color: rgba(161,58,58,0.8); }
+
+    .route-stop input[type=text] {
+      flex: 1; background: var(--card); border: 1px solid var(--border-strong);
+      border-radius: var(--radius); padding: 10px 12px; font-size: 14px;
+      font-family: var(--sans); color: var(--text); outline: none;
+      transition: border-color .15s; width: 100%;
+    }
+    .route-stop input[type=text]:focus     { border-color: var(--navy); }
+    .route-stop input[type=text]::placeholder { color: var(--text-light); }
+
+    .remove-stop-btn {
+      background: none; border: none; color: rgba(161,58,58,0.35); cursor: pointer;
+      font-size: 20px; line-height: 1; padding: 2px 6px; border-radius: var(--radius);
+      transition: color .15s; flex-shrink: 0;
+    }
+    .remove-stop-btn:hover { color: rgba(161,58,58,0.9); }
+
+    /* Leg-mode connector */
+    .leg-connector {
+      display: flex; align-items: center; gap: 8px;
+      padding: 5px 0 5px 38px;
+    }
+    .connector-via {
+      font-family: var(--mono); font-size: 10px; color: var(--text-light);
+      text-transform: uppercase; letter-spacing: .05em; flex-shrink: 0; white-space: nowrap;
+    }
+    .leg-mode-select {
+      flex: 1; background: var(--card); border: 1px solid var(--border-strong);
+      border-radius: var(--radius); padding: 7px 10px; font-size: 13px;
+      font-family: var(--sans); color: var(--text); outline: none; cursor: pointer;
+      transition: border-color .15s;
+    }
+    .leg-mode-select:focus { border-color: var(--navy); }
+
+    .add-stop-btn {
+      display: inline-flex; align-items: center; justify-content: center; gap: 6px;
+      background: transparent; border: 1.5px dashed var(--border-strong); border-radius: var(--radius);
+      padding: 9px 14px; font-size: 13px; font-family: var(--sans);
+      color: var(--text-mid); cursor: pointer; width: 100%; margin-top: 10px;
+      transition: border-color .15s, color .15s;
+    }
+    .add-stop-btn:hover { border-color: var(--navy); color: var(--text); }
+
+    /* Return toggle */
+    .return-toggle {
+      display: flex; align-items: center; gap: 12px; padding: 12px 14px;
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      margin-bottom: 14px; cursor: pointer; user-select: none;
+    }
+    .toggle-track {
+      width: 36px; height: 20px; border-radius: 10px;
+      background: var(--border-strong); position: relative;
+      transition: background .2s; flex-shrink: 0;
+    }
+    .toggle-track.on { background: #2f7a52; }
+    .toggle-thumb {
+      width: 16px; height: 16px; border-radius: 50%; background: #fff;
+      position: absolute; top: 2px; left: 2px; transition: left .2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,.2);
+    }
+    .toggle-track.on .toggle-thumb { left: 18px; }
+    .toggle-label { font-size: 14px; font-weight: 500; color: var(--text); }
+    .toggle-sub   { font-size: 12px; color: var(--text-mid); margin-top: 1px; }
+
+    /* Map card */
+    .map-card { background: var(--card); border: 1px solid var(--border); border-radius: var(--radius-lg); overflow: hidden; }
+    .map-header {
+      padding: 14px 18px; border-bottom: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; gap: 12px;
+    }
+    .map-title { font-size: 14px; font-weight: 500; color: var(--text); min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .map-meta  { font-family: var(--mono); font-size: 11px; color: var(--text-light); white-space: nowrap; flex-shrink: 0; }
+
+    #route-canvas { width: 100%; height: 300px; display: block; }
+
+    .em-preview { display: flex; border-top: 1px solid var(--border); }
+    .em-stat    { flex: 1; padding: 16px 12px; text-align: center; border-right: 1px solid var(--border); }
+    .em-stat:last-child { border-right: none; }
+    .em-label { font-family: var(--mono); font-size: 10px; color: var(--text-light); text-transform: uppercase; letter-spacing: .08em; }
+    .em-value { font-family: var(--serif); font-size: 28px; margin-top: 4px; color: var(--text); line-height: 1; }
+    .em-unit  { font-family: var(--mono); font-size: 10px; color: var(--text-light); margin-top: 3px; }
+    .em-value--green { color: #2f7a52; }
+
+    .leg-breakdown {
+      font-size: 12px; color: var(--text-mid); padding: 10px 16px;
+      border-top: 1px solid var(--border); display: none; background: var(--bg);
+    }
+    .leg-row   { display: flex; justify-content: space-between; align-items: center; padding: 3px 0; gap: 8px; }
+    .leg-route { color: var(--text-mid); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .leg-kg    { color: #2f7a52; font-weight: 600; flex-shrink: 0; font-family: var(--mono); font-size: 12px; }
+
+    /* Form card */
+    .form-card {
+      background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); padding: 24px;
+    }
+    .info-box {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: var(--radius); padding: 12px 16px; font-size: 13px;
+      color: var(--text-mid); margin-bottom: 16px; line-height: 1.55;
+    }
+    .fg { margin-bottom: 14px; }
+    .fg label {
+      display: block; font-family: var(--mono); font-size: 11px;
+      text-transform: uppercase; letter-spacing: .1em; color: var(--text-mid); margin-bottom: 6px;
+    }
+    .fg input[type=date],
+    .fg input[type=number],
+    .fg input[type=text] {
+      width: 100%; background: var(--card); border: 1px solid var(--border-strong);
+      border-radius: var(--radius); padding: 10px 12px; font-size: 14px;
+      font-family: var(--sans); color: var(--text); outline: none; transition: border-color .15s;
+    }
+    .fg input:focus { border-color: var(--navy); }
+    .fg input::placeholder { color: var(--text-light); }
+    .grid-2-sm { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+
+    .btn-submit {
+      display: flex; align-items: center; justify-content: center;
+      width: 100%; padding: 13px; background: var(--navy); color: var(--white);
+      border: none; border-radius: var(--radius); font-family: var(--sans);
+      font-size: 15px; font-weight: 500; cursor: pointer; transition: background .15s; margin-bottom: 10px;
+    }
+    .btn-submit:hover { background: #14232e; }
+    .btn-back {
+      display: block; text-align: center; font-family: var(--mono);
+      font-size: 12px; color: var(--text-mid); letter-spacing: .04em; text-decoration: none;
+    }
+    .btn-back:hover { color: var(--navy); }
+
+    .loading-bar {
+      background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius);
+      padding: 14px; text-align: center; font-size: 13px; color: var(--text-mid);
+      margin-bottom: 12px; display: none;
+      font-family: var(--mono); letter-spacing: .03em;
+    }
+    .client-error {
+      background: rgba(161,58,58,0.07); border: 1px solid rgba(161,58,58,0.22);
+      border-radius: var(--radius); padding: 12px 14px; font-size: 13px;
+      color: #a13a3a; margin-bottom: 14px; display: none;
+    }
+    .demo-box {
+      padding: 16px 20px; background: var(--card); border: 1px solid var(--border);
+      border-radius: var(--radius-lg); margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <div id="nav"></div>
 
-  <section class="hero" style="padding: 88px 0 56px;">
+  <section class="hero" style="padding: 88px 0 48px;">
     <div class="container">
-      <div class="hero__eyebrow"><span class="dot"></span>Self-serve · no login · last-year data only</div>
-      <h1 style="font-size: 60px; line-height: 1.02; max-width: 18ch; margin-bottom: 22px;">Upload your spreadsheet. See your preview.</h1>
-      <p class="hero__lede" style="margin-bottom: 0;">CSV or XLSX, any column order. ClariComp validates headers, computes missing distances, and returns a tender-readiness assessment - in the browser, in minutes.</p>
+      <div class="hero__eyebrow"><span class="dot"></span>DEFRA 2025 · multi-leg · Haversine distances</div>
+      <h1 style="font-size: 56px; line-height: 1.02; max-width: 20ch; margin-bottom: 20px;">Log a trip. See your carbon footprint instantly.</h1>
+      <p class="hero__lede" style="margin-bottom: 0;">Enter origin and destination. Add stopovers for multi-leg journeys. Each leg gets its own transport mode. Emissions calculated in real time using DEFRA 2025 factors.</p>
     </div>
   </section>
 
-  <section class="section section--first" style="padding-top: 24px;">
+  <section class="section section--first" style="padding-top: 24px; padding-bottom: 96px;">
     <div class="container">
-      <div style="display:grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: start;">
 
-        <!-- Upload form -->
-        <form id="upload-form" onsubmit="event.preventDefault(); startProcessing();" style="display:flex; flex-direction: column; gap: 20px;">
-          <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 16px;">
-            <div class="field"><label for="co">Company name <span style="text-transform:none; letter-spacing: 0; color: var(--text-light);">(optional)</span></label><input id="co" type="text" placeholder="Northgate Manufacturing Ltd" /></div>
-            <div class="field"><label for="email">Email <span style="color: var(--text-light); text-transform:none; letter-spacing: 0;">· to send preview</span></label><input id="email" type="email" required placeholder="finance@yourcompany.co.uk" /></div>
+      <div class="log-layout">
+
+        <!-- ── Form column ──────────────────────────────────── -->
+        <div>
+          <div class="info-box">
+            <strong>Multi-leg routes:</strong> Use "Add stopover" to add intermediate cities. Each leg gets its own transport mode — useful for mixed journeys such as a flight then rail. Every leg is calculated separately and the full audit trail is visible.
           </div>
 
-          <div class="field">
-            <label for="year">Reporting year</label>
-            <select id="year">
-              <option value="2024-25" selected>FY 2024 - 25 (last year)</option>
-              <option value="2023-24">FY 2023 - 24</option>
-            </select>
-          </div>
+          <div id="client-error" class="client-error"></div>
 
-          <!-- Dropzone -->
-          <div id="dropzone" class="dropzone" style="margin-top: 8px;">
-            <div class="dropzone__icon" id="dz-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#203848" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"/><path d="M5 12l7-7 7 7"/></svg>
+          <div class="form-card">
+            <div class="grid-2-sm fg">
+              <div>
+                <label for="trip-date">Date of travel</label>
+                <input type="date" id="trip-date" />
+              </div>
+              <div>
+                <label for="passengers">Passengers</label>
+                <input type="number" id="passengers" min="1" max="500" value="1" onchange="updatePreview()" />
+              </div>
             </div>
-            <h3 class="dropzone__title" id="dz-title">Drop your travel CSV</h3>
-            <p class="dropzone__sub" id="dz-sub">Any column order. ClariComp will match your headers in the next step.</p>
-            <button type="button" class="btn btn--primary" onclick="document.getElementById('file').click()">Browse files</button>
-            <input id="file" type="file" accept=".csv,.xlsx" hidden onchange="onFile(this.files[0])" />
-            <div class="dropzone__meta">.CSV · .XLSX · up to 50 MB</div>
+
+            <!-- Route builder -->
+            <div class="fg" style="margin-bottom: 14px;">
+              <label style="display: block; margin-bottom: 10px;">Route</label>
+
+              <div class="route-builder" id="route-builder">
+
+                <!-- Origin -->
+                <div class="route-stop">
+                  <div class="stop-dot stop-dot-origin">A</div>
+                  <input type="text" id="origin-input" list="city-list"
+                    placeholder="Origin — e.g. London, Manchester"
+                    autocomplete="off" oninput="onCityInput('origin')" />
+                </div>
+
+                <!-- Leg 0 connector (origin → first stop / destination) -->
+                <div class="leg-connector" id="leg-mode-0">
+                  <span class="connector-via">via</span>
+                  <select class="leg-mode-select" id="leg-mode-select-0" onchange="updatePreview()">
+                    <optgroup label="Flights">
+                      <option value="Flight-Domestic">Flight — Domestic</option>
+                      <option value="Flight-ShortHaul-Economy">Flight — Short Haul Economy</option>
+                      <option value="Flight-ShortHaul-Business">Flight — Short Haul Business</option>
+                      <option value="Flight-LongHaul-Economy" selected>Flight — Long Haul Economy</option>
+                      <option value="Flight-LongHaul-Business">Flight — Long Haul Business</option>
+                      <option value="Flight-LongHaul-First">Flight — Long Haul First</option>
+                    </optgroup>
+                    <optgroup label="Rail">
+                      <option value="Train-National">Train — National Rail</option>
+                      <option value="Train-International">Train — International</option>
+                    </optgroup>
+                    <optgroup label="Road">
+                      <option value="Car-Petrol">Car — Average Petrol</option>
+                      <option value="Car-Diesel">Car — Average Diesel</option>
+                      <option value="Car-Hybrid">Car — Average Hybrid</option>
+                      <option value="Car-Electric">Car — Average Electric</option>
+                      <option value="Taxi">Taxi</option>
+                    </optgroup>
+                    <optgroup label="Ferry">
+                      <option value="Ferry-Foot">Ferry — Foot Passenger</option>
+                      <option value="Ferry-Car">Ferry — Car Passenger</option>
+                    </optgroup>
+                  </select>
+                </div>
+
+                <!-- Dynamic stopover rows inserted here -->
+                <div id="stopovers-container"></div>
+
+                <!-- Destination -->
+                <div class="route-stop" id="stop-row-dest">
+                  <div class="stop-dot stop-dot-dest">B</div>
+                  <input type="text" id="dest-input" list="city-list"
+                    placeholder="Destination — e.g. Dubai, Singapore"
+                    autocomplete="off" oninput="onCityInput('dest')" />
+                </div>
+
+              </div>
+
+              <button type="button" class="add-stop-btn" onclick="addStopover()">
+                + Add stopover / layover
+              </button>
+            </div>
+
+            <!-- Notes (optional) -->
+            <div class="fg" style="margin-bottom: 16px;">
+              <label for="trip-notes">Notes (optional)</label>
+              <input type="text" id="trip-notes" placeholder="e.g. client visit, conference, site inspection" />
+            </div>
+
+            <!-- Return toggle — hidden when stopovers are present -->
+            <div id="return-toggle-wrap">
+              <div class="return-toggle" onclick="toggleReturn()">
+                <div id="ret-track" class="toggle-track"><div class="toggle-thumb"></div></div>
+                <div>
+                  <div class="toggle-label">Return trip</div>
+                  <div class="toggle-sub">Include the same journey back</div>
+                </div>
+              </div>
+            </div>
+
+            <div id="loading" class="loading-bar">Calculating DEFRA 2025 emissions for all legs…</div>
+
+            <button type="button" class="btn-submit" onclick="onSubmit()">Calculate &amp; save trip →</button>
+            <a href="results.html" class="btn-back">← View trip log</a>
           </div>
 
-          <!-- States stack -->
-          <div id="states" style="display:flex; flex-direction: column; gap: 10px;"></div>
-
-          <!-- Submit -->
-          <div id="submit-row" style="display:flex; gap: 12px; align-items: center; margin-top: 8px;" hidden>
-            <button type="submit" class="btn btn--primary btn--lg" id="submit-btn">Generate my preview</button>
-            <a href="#" onclick="event.preventDefault(); resetForm();" style="font-family: var(--mono); font-size: 12px; color: var(--text-mid); letter-spacing: 0.04em;">Start over</a>
-          </div>
-
-          <!-- Demo state buttons -->
-          <div style="margin-top: 24px; padding: 16px 20px; background: var(--card); border: 1px solid var(--border); border-radius: var(--radius);">
-            <div class="eyebrow" style="margin-bottom: 10px;">Try a validation state · demo</div>
-            <div style="display:flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('ok')">Valid file</button>
-              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('warn')">Partial data</button>
-              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('err')">Invalid file</button>
-              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoState('current')">Current-year data</button>
+          <!-- Quick-fill examples -->
+          <div class="demo-box">
+            <div class="eyebrow" style="margin-bottom: 10px;">Quick-fill examples</div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoTrip('lhr-dxb')">London → Dubai</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoTrip('man-nyc')">Manchester → New York</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoTrip('lon-sin-mel')">London → Singapore → Melbourne</button>
+              <button type="button" class="btn btn--ghost" style="padding: 8px 14px; font-size: 13px;" onclick="demoTrip('lon-par-rail')">London → Paris (Eurostar)</button>
             </div>
           </div>
-        </form>
+        </div>
 
-        <!-- Auto-detected columns + template -->
-        <aside style="display:flex; flex-direction: column; gap: 16px; position: sticky; top: 96px;">
-          <div class="card" style="padding: 24px 28px;">
-            <div class="eyebrow" style="margin-bottom: 16px;">Auto-detected columns</div>
-            <table style="width: 100%; border-collapse: collapse; font-size: 14px;">
-              <tbody id="cols-body">
-                <tr><td style="padding: 10px 0; color: var(--text-mid);">Drop a file to see column matching.</td></tr>
-              </tbody>
-            </table>
+        <!-- ── Map + preview column ─────────────────────────── -->
+        <div class="log-map-col">
+          <div class="map-card">
+            <div class="map-header">
+              <div class="map-title" id="map-title">Route map</div>
+              <div class="map-meta"  id="map-meta">Enter origin and destination</div>
+            </div>
+            <canvas id="route-canvas" width="640" height="300"></canvas>
+            <div class="em-preview" id="em-preview" style="display: none;">
+              <div class="em-stat">
+                <div class="em-label">Legs</div>
+                <div class="em-value" id="em-legs">1</div>
+                <div class="em-unit">segments</div>
+              </div>
+              <div class="em-stat">
+                <div class="em-label">Distance</div>
+                <div class="em-value" id="em-dist">–</div>
+                <div class="em-unit">km (Haversine)</div>
+              </div>
+              <div class="em-stat">
+                <div class="em-label">Total</div>
+                <div class="em-value em-value--green" id="em-total">–</div>
+                <div class="em-unit">kgCO₂e</div>
+              </div>
+            </div>
+            <div class="leg-breakdown" id="leg-breakdown"></div>
           </div>
+          <p style="font-size: 11px; color: var(--text-light); margin-top: 8px; padding: 0 4px; font-family: var(--mono); letter-spacing: .03em; line-height: 1.6;">
+            * Preview uses Haversine great-circle estimates. Full platform applies DEFRA 2025 emission factors with precise door-to-door distances per leg and passenger class.
+          </p>
+        </div>
 
-          <div class="card" style="padding: 24px 28px; background: var(--white); border-color: var(--border);">
-            <div class="eyebrow" style="margin-bottom: 12px;">Need a starting point?</div>
-            <h4 style="font-size: 17px; margin-bottom: 8px;">Download the template</h4>
-            <p style="font-size: 14px; color: var(--text-mid); margin-bottom: 16px;">XLSX with the five required columns and ten example trips. Use it as the format reference for your own export.</p>
-            <a href="#" class="btn btn--ghost" style="padding: 9px 16px; font-size: 13.5px;" onclick="event.preventDefault(); alert('Template download placeholder - wire to file.');">Download template (.xlsx)</a>
-          </div>
-
-          <div style="padding: 18px 22px; border: 1px solid var(--border); border-radius: var(--radius-lg); font-size: 13px; color: var(--text-mid); background: rgba(255,255,255,0.5);">
-            <div class="eyebrow" style="margin-bottom: 8px;">Why last-year data only?</div>
-            A complete reporting period gives an honest annual total. Partial-year data inflates per-row averages and produces a preview you can't sign. <a href="methodology.html" style="color: var(--navy); text-decoration: underline;">More on methodology</a>.
-          </div>
-        </aside>
       </div>
     </div>
   </section>
 
   <div id="footer"></div>
+
+  <!-- City datalist -->
+  <datalist id="city-list"></datalist>
+
   <script src="chrome.js"></script>
-
   <script>
-    // ─── Preview-upload demo logic ───────────────────────────────────────
-    // Real processing would happen server-side. This is a faithful
-    // visualisation of the validation flow described in the brief.
+  // ── City database ─────────────────────────────────────────────────────────────
+  const CITIES = {
+    // UK
+    'London':         {lat:51.5074,  lng:-0.1278},
+    'Birmingham':     {lat:52.4862,  lng:-1.8904},
+    'Manchester':     {lat:53.4808,  lng:-2.2426},
+    'Edinburgh':      {lat:55.9533,  lng:-3.1883},
+    'Glasgow':        {lat:55.8642,  lng:-4.2518},
+    'Bristol':        {lat:51.4545,  lng:-2.5879},
+    'Leeds':          {lat:53.8008,  lng:-1.5491},
+    'Liverpool':      {lat:53.4084,  lng:-2.9916},
+    'Cardiff':        {lat:51.4816,  lng:-3.1791},
+    'Belfast':        {lat:54.5973,  lng:-5.9301},
+    'Newcastle':      {lat:54.9783,  lng:-1.6178},
+    'Sheffield':      {lat:53.3811,  lng:-1.4701},
+    'Nottingham':     {lat:52.9548,  lng:-1.1581},
+    'Leicester':      {lat:52.6369,  lng:-1.1398},
+    'Southampton':    {lat:50.9097,  lng:-1.4044},
+    'Oxford':         {lat:51.7520,  lng:-1.2577},
+    'Cambridge':      {lat:52.2053,  lng:0.1218},
+    'Exeter':         {lat:50.7260,  lng:-3.5275},
+    'Norwich':        {lat:52.6309,  lng:1.2974},
+    'Derby':          {lat:52.9225,  lng:-1.4746},
+    // Europe
+    'Paris':          {lat:48.8566,  lng:2.3522},
+    'Berlin':         {lat:52.5200,  lng:13.4050},
+    'Amsterdam':      {lat:52.3676,  lng:4.9041},
+    'Brussels':       {lat:50.8503,  lng:4.3517},
+    'Dublin':         {lat:53.3498,  lng:-6.2603},
+    'Madrid':         {lat:40.4168,  lng:-3.7038},
+    'Barcelona':      {lat:41.3851,  lng:2.1734},
+    'Rome':           {lat:41.9028,  lng:12.4964},
+    'Milan':          {lat:45.4654,  lng:9.1859},
+    'Frankfurt':      {lat:50.1109,  lng:8.6821},
+    'Munich':         {lat:48.1351,  lng:11.5820},
+    'Vienna':         {lat:48.2082,  lng:16.3738},
+    'Zurich':         {lat:47.3769,  lng:8.5417},
+    'Geneva':         {lat:46.2044,  lng:6.1432},
+    'Lisbon':         {lat:38.7223,  lng:-9.1393},
+    'Stockholm':      {lat:59.3293,  lng:18.0686},
+    'Oslo':           {lat:59.9139,  lng:10.7522},
+    'Copenhagen':     {lat:55.6761,  lng:12.5683},
+    'Helsinki':       {lat:60.1699,  lng:24.9384},
+    'Warsaw':         {lat:52.2297,  lng:21.0122},
+    'Prague':         {lat:50.0755,  lng:14.4378},
+    'Budapest':       {lat:47.4979,  lng:19.0402},
+    'Bucharest':      {lat:44.4268,  lng:26.1025},
+    'Athens':         {lat:37.9838,  lng:23.7275},
+    'Istanbul':       {lat:41.0082,  lng:28.9784},
+    'Kyiv':           {lat:50.4501,  lng:30.5234},
+    'Reykjavik':      {lat:64.1355,  lng:-21.8954},
+    // Americas
+    'New York':       {lat:40.7128,  lng:-74.0060},
+    'Los Angeles':    {lat:34.0522,  lng:-118.2437},
+    'Chicago':        {lat:41.8781,  lng:-87.6298},
+    'Toronto':        {lat:43.6532,  lng:-79.3832},
+    'Montreal':       {lat:45.5017,  lng:-73.5673},
+    'Vancouver':      {lat:49.2827,  lng:-123.1207},
+    'Mexico City':    {lat:19.4326,  lng:-99.1332},
+    'São Paulo':      {lat:-23.5505, lng:-46.6333},
+    'Buenos Aires':   {lat:-34.6037, lng:-58.3816},
+    'Bogotá':         {lat:4.7110,   lng:-74.0721},
+    'Lima':           {lat:-12.0464, lng:-77.0428},
+    'Santiago':       {lat:-33.4489, lng:-70.6693},
+    'Miami':          {lat:25.7617,  lng:-80.1918},
+    'Boston':         {lat:42.3601,  lng:-71.0589},
+    'Washington':     {lat:38.9072,  lng:-77.0369},
+    'San Francisco':  {lat:37.7749,  lng:-122.4194},
+    'Houston':        {lat:29.7604,  lng:-95.3698},
+    'Dallas':         {lat:32.7767,  lng:-96.7970},
+    'Atlanta':        {lat:33.7490,  lng:-84.3880},
+    'Seattle':        {lat:47.6062,  lng:-122.3321},
+    // Middle East
+    'Dubai':          {lat:25.2048,  lng:55.2708},
+    'Abu Dhabi':      {lat:24.4539,  lng:54.3773},
+    'Doha':           {lat:25.2854,  lng:51.5310},
+    'Riyadh':         {lat:24.6877,  lng:46.7219},
+    'Jeddah':         {lat:21.5433,  lng:39.1728},
+    'Kuwait City':    {lat:29.3759,  lng:47.9774},
+    'Muscat':         {lat:23.5880,  lng:58.3829},
+    'Beirut':         {lat:33.8938,  lng:35.5018},
+    'Tel Aviv':       {lat:32.0853,  lng:34.7818},
+    'Amman':          {lat:31.9454,  lng:35.9284},
+    'Bahrain':        {lat:26.0667,  lng:50.5577},
+    // Asia Pacific
+    'Singapore':      {lat:1.3521,   lng:103.8198},
+    'Hong Kong':      {lat:22.3193,  lng:114.1694},
+    'Tokyo':          {lat:35.6762,  lng:139.6503},
+    'Osaka':          {lat:34.6937,  lng:135.5023},
+    'Seoul':          {lat:37.5665,  lng:126.9780},
+    'Beijing':        {lat:39.9042,  lng:116.4074},
+    'Shanghai':       {lat:31.2304,  lng:121.4737},
+    'Mumbai':         {lat:19.0760,  lng:72.8777},
+    'Delhi':          {lat:28.7041,  lng:77.1025},
+    'Bangalore':      {lat:12.9716,  lng:77.5946},
+    'Chennai':        {lat:13.0827,  lng:80.2707},
+    'Hyderabad':      {lat:17.3850,  lng:78.4867},
+    'Bangkok':        {lat:13.7563,  lng:100.5018},
+    'Jakarta':        {lat:-6.2088,  lng:106.8456},
+    'Kuala Lumpur':   {lat:3.1390,   lng:101.6869},
+    'Sydney':         {lat:-33.8688, lng:151.2093},
+    'Melbourne':      {lat:-37.8136, lng:144.9631},
+    'Brisbane':       {lat:-27.4698, lng:153.0251},
+    'Perth':          {lat:-31.9505, lng:115.8605},
+    'Auckland':       {lat:-36.8485, lng:174.7633},
+    'Taipei':         {lat:25.0330,  lng:121.5654},
+    'Colombo':        {lat:6.9271,   lng:79.8612},
+    'Dhaka':          {lat:23.8103,  lng:90.4125},
+    'Karachi':        {lat:24.8607,  lng:67.0011},
+    'Lahore':         {lat:31.5204,  lng:74.3587},
+    'Islamabad':      {lat:33.7294,  lng:73.0931},
+    'Kathmandu':      {lat:27.7172,  lng:85.3240},
+    'Yangon':         {lat:16.8661,  lng:96.1951},
+    'Ho Chi Minh':    {lat:10.8231,  lng:106.6297},
+    'Hanoi':          {lat:21.0245,  lng:105.8412},
+    'Manila':         {lat:14.5995,  lng:120.9842},
+    // Africa
+    'Cairo':          {lat:30.0444,  lng:31.2357},
+    'Lagos':          {lat:6.5244,   lng:3.3792},
+    'Nairobi':        {lat:-1.2921,  lng:36.8219},
+    'Johannesburg':   {lat:-26.2041, lng:28.0473},
+    'Cape Town':      {lat:-33.9249, lng:18.4241},
+    'Accra':          {lat:5.6037,   lng:-0.1870},
+    'Casablanca':     {lat:33.5731,  lng:-7.5898},
+    'Addis Ababa':    {lat:9.0300,   lng:38.7400},
+    'Dar es Salaam':  {lat:-6.7924,  lng:39.2083},
+    'Kampala':        {lat:0.3476,   lng:32.5825},
+    'Tunis':          {lat:36.8065,  lng:10.1815},
+    'Dakar':          {lat:14.7167,  lng:-17.4677},
+    'Algiers':        {lat:36.7372,  lng:3.0865},
+    'Kigali':         {lat:-1.9441,  lng:30.0619},
+    'Abidjan':        {lat:5.3600,   lng:-4.0083},
+  };
 
-    function el(id) { return document.getElementById(id); }
-
-    function setColumns(rows) {
-      const tbody = el('cols-body');
-      tbody.innerHTML = rows.map(r => `
-        <tr style="border-top: 1px solid var(--border);">
-          <td style="padding: 12px 0; width: 36%;">${r.from}</td>
-          <td style="padding: 12px 0; font-family: var(--mono); font-size: 13px; color: var(--text-mid);">→ ${r.to}</td>
-          <td style="padding: 12px 0; text-align: right; color: ${r.ok ? '#2f7a52' : '#a07024'};">${r.ok ? '✓' : '△'}</td>
-        </tr>
-      `).join('');
-    }
-
-    function clearStates() { el('states').innerHTML = ''; el('submit-row').hidden = true; }
-
-    function pushState(kind, title, body) {
-      const cls = kind === 'ok' ? 'state--ok' : kind === 'warn' ? 'state--warn' : 'state--err';
-      el('states').insertAdjacentHTML('beforeend', `
-        <div class="state ${cls}"><span class="state__dot"></span>
-          <div><div class="state__title">${title}</div><div class="state__body">${body}</div></div>
-        </div>`);
-    }
-
-    function setDropzone(title, sub) {
-      el('dz-title').textContent = title;
-      el('dz-sub').textContent = sub;
-    }
-
-    function onFile(file) {
-      if (!file) return;
-      // Naive client-side detection
-      const ok = /\.(csv|xlsx)$/i.test(file.name);
-      if (!ok) { demoState('err'); return; }
-      setDropzone(file.name, (file.size/1024).toFixed(0) + ' KB · ready to validate');
-      demoState('ok');
-    }
-
-    function demoState(kind) {
-      clearStates();
-      if (kind === 'ok') {
-        setColumns([
-          { from: 'Date',        to: 'trip_date',      ok: true },
-          { from: 'Employee',    to: 'user_name',      ok: true },
-          { from: 'Origin',      to: 'from_address',   ok: true },
-          { from: 'Destination', to: 'to_address',     ok: true },
-          { from: 'Mode',        to: 'transport_mode', ok: true },
-          { from: 'Distance',    to: '- (will compute)', ok: false },
-        ]);
-        pushState('ok', 'Your file looks good. Processing your preview.',
-          'File type valid · reporting year FY 2024-25 detected · 312 rows ready · 6/6 required columns matched.');
-        el('submit-row').hidden = false;
-      }
-      else if (kind === 'warn') {
-        setColumns([
-          { from: 'Date',        to: 'trip_date',      ok: true },
-          { from: 'Employee',    to: 'user_name',      ok: true },
-          { from: 'Origin',      to: 'from_address',   ok: true },
-          { from: 'Destination', to: 'to_address',     ok: false },
-          { from: 'Mode',        to: 'transport_mode', ok: true },
-          { from: 'Distance',    to: '-',              ok: false },
-        ]);
-        pushState('warn', 'Some data is missing. Your preview will be partial.',
-          '8 of 312 rows are missing a destination. ClariComp will skip these rows in the preview and flag them in the output. Download the template to see the required format.');
-        el('submit-row').hidden = false;
-      }
-      else if (kind === 'err') {
-        setColumns([
-          { from: 'Date',  to: '-', ok: false },
-          { from: 'Notes', to: '-', ok: false },
-          { from: 'Cost',  to: '-', ok: false },
-        ]);
-        pushState('err', 'This file cannot be processed.',
-          'No recognisable trip columns found. The file looks like an expense reimbursement export, not a travel log. Download our template to start again.');
-      }
-      else if (kind === 'current') {
-        setColumns([
-          { from: 'Date',        to: 'trip_date',      ok: true },
-          { from: 'Employee',    to: 'user_name',      ok: true },
-          { from: 'Origin',      to: 'from_address',   ok: true },
-          { from: 'Destination', to: 'to_address',     ok: true },
-          { from: 'Mode',        to: 'transport_mode', ok: true },
-        ]);
-        pushState('err', 'Current-year data - ClariComp only accepts last-year files.',
-          'Detected reporting year FY 2025-26. ClariComp only accepts data from the previous financial year to ensure your preview reflects a complete reporting period. Please upload data from the previous financial year.');
-      }
-    }
-
-    function startProcessing() {
-      // Real submission would POST to the server here.
-      window.location.href = 'results.html';
-    }
-
-    function resetForm() {
-      clearStates();
-      setColumns([{ from: 'Drop a file to see column matching.', to: '', ok: true }]);
-      el('cols-body').innerHTML = `<tr><td style="padding: 10px 0; color: var(--text-mid);">Drop a file to see column matching.</td></tr>`;
-      setDropzone('Drop your travel CSV', "Any column order. ClariComp will match your headers in the next step.");
-      el('upload-form').reset();
-    }
-
-    // Drag-drop visual cue
-    const dz = el('dropzone');
-    ['dragover', 'dragenter'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = 'var(--navy)'; }));
-    ['dragleave', 'drop'].forEach(e => dz.addEventListener(e, ev => { ev.preventDefault(); dz.style.borderColor = ''; }));
-    dz.addEventListener('drop', ev => {
-      const f = ev.dataTransfer && ev.dataTransfer.files[0];
-      if (f) onFile(f);
+  // Populate datalist with sorted city names
+  (function () {
+    const dl = document.getElementById('city-list');
+    Object.keys(CITIES).sort().forEach(name => {
+      const opt = document.createElement('option');
+      opt.value = name;
+      dl.appendChild(opt);
     });
+  })();
+
+  // ── DEFRA 2025 emission factors (kgCO₂e per passenger-km) ────────────────────
+  const EF = {
+    'Flight-Domestic':            0.255133,
+    'Flight-ShortHaul-Economy':   0.153180,
+    'Flight-ShortHaul-Business':  0.229770,
+    'Flight-LongHaul-Economy':    0.147613,
+    'Flight-LongHaul-Business':   0.429234,
+    'Flight-LongHaul-First':      0.590454,
+    'Train-National':             0.035390,
+    'Train-International':        0.004130,
+    'Car-Petrol':                 0.168330,
+    'Car-Diesel':                 0.163050,
+    'Car-Hybrid':                 0.106850,
+    'Car-Electric':               0.052690,
+    'Taxi':                       0.149780,
+    'Ferry-Foot':                 0.018820,
+    'Ferry-Car':                  0.128860,
+  };
+  // Vehicle modes: factor is per vehicle-km (not per passenger-km)
+  const VEHICLE_KM = new Set(['Car-Petrol','Car-Diesel','Car-Hybrid','Car-Electric','Taxi','Ferry-Car']);
+
+  const MODE_OPTIONS_HTML = `
+    <optgroup label="Flights">
+      <option value="Flight-Domestic">Flight — Domestic</option>
+      <option value="Flight-ShortHaul-Economy">Flight — Short Haul Economy</option>
+      <option value="Flight-ShortHaul-Business">Flight — Short Haul Business</option>
+      <option value="Flight-LongHaul-Economy">Flight — Long Haul Economy</option>
+      <option value="Flight-LongHaul-Business">Flight — Long Haul Business</option>
+      <option value="Flight-LongHaul-First">Flight — Long Haul First</option>
+    </optgroup>
+    <optgroup label="Rail">
+      <option value="Train-National">Train — National Rail</option>
+      <option value="Train-International">Train — International</option>
+    </optgroup>
+    <optgroup label="Road">
+      <option value="Car-Petrol">Car — Average Petrol</option>
+      <option value="Car-Diesel">Car — Average Diesel</option>
+      <option value="Car-Hybrid">Car — Average Hybrid</option>
+      <option value="Car-Electric">Car — Average Electric</option>
+      <option value="Taxi">Taxi</option>
+    </optgroup>
+    <optgroup label="Ferry">
+      <option value="Ferry-Foot">Ferry — Foot Passenger</option>
+      <option value="Ferry-Car">Ferry — Car Passenger</option>
+    </optgroup>`;
+
+  // ── App state ─────────────────────────────────────────────────────────────────
+  let resolvedCities = { origin: null, dest: null };
+  let midStops    = [];   // [{id, city}]
+  let stopCounter = 0;
+  let appState    = { isReturn: false };
+
+  // ── City resolution ───────────────────────────────────────────────────────────
+  function resolveCity(name) {
+    if (!name) return null;
+    const trimmed = name.trim();
+    if (CITIES[trimmed]) return { name: trimmed, ...CITIES[trimmed] };
+    const key = Object.keys(CITIES).find(k => k.toLowerCase() === trimmed.toLowerCase());
+    return key ? { name: key, ...CITIES[key] } : null;
+  }
+
+  function onCityInput(which) {
+    const inputId = which === 'origin' ? 'origin-input' : 'dest-input';
+    resolvedCities[which] = resolveCity(document.getElementById(inputId).value);
+    updatePreview();
+  }
+
+  // ── Stopover management ───────────────────────────────────────────────────────
+  function addStopover() {
+    const prevMode = getLastModeSelectValue();
+    const id = ++stopCounter;
+    midStops.push({ id, city: null });
+
+    const destRow   = document.getElementById('stop-row-dest');
+    const container = destRow.parentNode;
+
+    const stopDiv = document.createElement('div');
+    stopDiv.className = 'route-stop';
+    stopDiv.id = `stop-row-${id}`;
+    stopDiv.innerHTML = `
+      <div class="stop-dot stop-dot-via">●</div>
+      <input type="text" id="stop-input-${id}" list="city-list"
+        placeholder="Stopover city" autocomplete="off" oninput="onStopInput(${id})" />
+      <button type="button" class="remove-stop-btn" onclick="removeStopover(${id})" title="Remove stop">×</button>`;
+    container.insertBefore(stopDiv, destRow);
+
+    const connDiv = document.createElement('div');
+    connDiv.className = 'leg-connector';
+    connDiv.id = `leg-mode-${id}`;
+    connDiv.innerHTML = `<span class="connector-via">via</span>`;
+    const sel = document.createElement('select');
+    sel.className = 'leg-mode-select';
+    sel.id = `leg-mode-select-${id}`;
+    sel.innerHTML = MODE_OPTIONS_HTML;
+    sel.value = prevMode;
+    sel.addEventListener('change', updatePreview);
+    connDiv.appendChild(sel);
+    container.insertBefore(connDiv, destRow);
+
+    refreshReturnToggle();
+    updateDotLabels();
+    updatePreview();
+  }
+
+  function onStopInput(id) {
+    const val = document.getElementById(`stop-input-${id}`)?.value || '';
+    const s = midStops.find(x => x.id === id);
+    if (s) s.city = resolveCity(val);
+    updatePreview();
+  }
+
+  function removeStopover(id) {
+    midStops = midStops.filter(s => s.id !== id);
+    document.getElementById(`stop-row-${id}`)?.remove();
+    document.getElementById(`leg-mode-${id}`)?.remove();
+    refreshReturnToggle();
+    updateDotLabels();
+    updatePreview();
+  }
+
+  function getLastModeSelectValue() {
+    if (!midStops.length) return document.getElementById('leg-mode-select-0')?.value || 'Flight-LongHaul-Economy';
+    const lastId = midStops[midStops.length - 1].id;
+    return document.getElementById(`leg-mode-select-${lastId}`)?.value || 'Flight-LongHaul-Economy';
+  }
+
+  function getAllModeSelects() {
+    const sels = [document.getElementById('leg-mode-select-0')];
+    midStops.forEach(s => sels.push(document.getElementById(`leg-mode-select-${s.id}`)));
+    return sels;
+  }
+
+  function updateDotLabels() {
+    const LABELS = 'CDEFGHIJKLMNOPQ';
+    document.querySelectorAll('.stop-dot-via').forEach((dot, i) => {
+      dot.textContent = midStops.length > 1 ? (LABELS[i] || '●') : '●';
+    });
+  }
+
+  function refreshReturnToggle() {
+    document.getElementById('return-toggle-wrap').style.display = midStops.length > 0 ? 'none' : '';
+    if (midStops.length > 0) appState.isReturn = false;
+  }
+
+  // ── Haversine ─────────────────────────────────────────────────────────────────
+  function haversine(c1, c2) {
+    if (!c1 || !c2) return 0;
+    const R = 6371, r = d => d * Math.PI / 180;
+    const dLat = r(c2.lat - c1.lat), dLng = r(c2.lng - c1.lng);
+    const a = Math.sin(dLat/2)**2 + Math.cos(r(c1.lat)) * Math.cos(r(c2.lat)) * Math.sin(dLng/2)**2;
+    return Math.round(R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)));
+  }
+
+  // ── Canvas route map ──────────────────────────────────────────────────────────
+  function drawCanvas(cities) {
+    const canvas = document.getElementById('route-canvas');
+    const ctx    = canvas.getContext('2d');
+    const dpr    = window.devicePixelRatio || 1;
+    const W = canvas.offsetWidth, H = canvas.offsetHeight;
+    canvas.width  = W * dpr;
+    canvas.height = H * dpr;
+    ctx.scale(dpr, dpr);
+
+    // Background gradient
+    const bg = ctx.createLinearGradient(0, 0, 0, H);
+    bg.addColorStop(0, '#1a2535');
+    bg.addColorStop(1, '#1e2d3d');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    const valid = cities.filter(Boolean);
+
+    // Determine projection window
+    let minLat = -65, maxLat = 75, minLng = -170, maxLng = 170;
+    if (valid.length >= 2) {
+      const lats = valid.map(c => c.lat);
+      const lngs = valid.map(c => c.lng);
+      const padLat = Math.max(18, (Math.max(...lats) - Math.min(...lats)) * 0.55 + 4);
+      const padLng = Math.max(18, (Math.max(...lngs) - Math.min(...lngs)) * 0.55 + 4);
+      minLat = Math.max(-80, Math.min(...lats) - padLat);
+      maxLat = Math.min(82,  Math.max(...lats) + padLat);
+      minLng = Math.max(-180, Math.min(...lngs) - padLng);
+      maxLng = Math.min(180,  Math.max(...lngs) + padLng);
+    }
+
+    const toX = lng => ((lng - minLng) / (maxLng - minLng)) * W;
+    const toY = lat => ((maxLat - lat) / (maxLat - minLat)) * H;
+
+    // Lat/lng grid
+    ctx.strokeStyle = 'rgba(100,150,190,0.10)';
+    ctx.lineWidth   = 0.5;
+    for (let lat = -90; lat <= 90; lat += 15) {
+      const y = toY(lat); if (y < 0 || y > H) continue;
+      ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke();
+    }
+    for (let lng = -180; lng <= 180; lng += 15) {
+      const x = toX(lng); if (x < 0 || x > W) continue;
+      ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke();
+    }
+
+    if (valid.length < 2) {
+      ctx.fillStyle    = 'rgba(150,185,210,0.25)';
+      ctx.font         = '11px "DM Mono", monospace';
+      ctx.textAlign    = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('Select cities to draw route', W / 2, H / 2);
+      return;
+    }
+
+    const pts = cities.map(c => c ? [toX(c.lng), toY(c.lat)] : null);
+
+    // Draw arc for each leg
+    for (let i = 0; i < pts.length - 1; i++) {
+      const p1 = pts[i], p2 = pts[i + 1];
+      if (!p1 || !p2) continue;
+
+      const mx   = (p1[0] + p2[0]) / 2;
+      const span = Math.abs(p2[0] - p1[0]);
+      const my   = (p1[1] + p2[1]) / 2 - span * 0.18 - 16;
+
+      ctx.beginPath();
+      ctx.moveTo(p1[0], p1[1]);
+      ctx.quadraticCurveTo(mx, my, p2[0], p2[1]);
+      ctx.strokeStyle = i === 0 ? 'rgba(47,122,82,0.95)' : 'rgba(84,108,123,0.9)';
+      ctx.lineWidth   = 2;
+      ctx.setLineDash([]);
+      ctx.stroke();
+
+      // Arrowhead at ~55% along the bezier
+      const drawArrow = (t1, t2, color) => {
+        const bx = (t, a, b, c) => (1-t)*(1-t)*a + 2*(1-t)*t*b + t*t*c;
+        const ax = bx(t1, p1[0], mx, p2[0]), ay = bx(t1, p1[1], my, p2[1]);
+        const bx2= bx(t2, p1[0], mx, p2[0]), by2= bx(t2, p1[1], my, p2[1]);
+        const angle = Math.atan2(by2 - ay, bx2 - ax);
+        const sz = 5.5;
+        ctx.beginPath();
+        ctx.moveTo(ax + sz * Math.cos(angle),       ay + sz * Math.sin(angle));
+        ctx.lineTo(ax + sz * Math.cos(angle + 2.4), ay + sz * Math.sin(angle + 2.4));
+        ctx.lineTo(ax + sz * Math.cos(angle - 2.4), ay + sz * Math.sin(angle - 2.4));
+        ctx.closePath();
+        ctx.fillStyle = color;
+        ctx.fill();
+      };
+      drawArrow(0.52, 0.57, i === 0 ? 'rgba(47,122,82,0.95)' : 'rgba(84,108,123,0.9)');
+    }
+
+    // Return dotted line (single-leg only)
+    if (appState.isReturn && pts.length === 2 && pts[0] && pts[1]) {
+      ctx.beginPath();
+      ctx.moveTo(pts[1][0], pts[1][1]);
+      ctx.lineTo(pts[0][0], pts[0][1]);
+      ctx.strokeStyle = 'rgba(149,167,179,0.35)';
+      ctx.setLineDash([4, 6]);
+      ctx.lineWidth   = 1.5;
+      ctx.stroke();
+      ctx.setLineDash([]);
+    }
+
+    // City dots + labels
+    cities.forEach((c, i) => {
+      if (!c) return;
+      const x = toX(c.lng), y = toY(c.lat);
+      const isEnd = i === 0 || i === cities.length - 1;
+      const r     = isEnd ? 6 : 4;
+      const color = i === 0 ? '#2f7a52' : (i === cities.length - 1 ? '#c0504a' : '#95a7b3');
+
+      // Outer glow
+      ctx.beginPath();
+      ctx.arc(x, y, r + 3, 0, Math.PI * 2);
+      ctx.fillStyle = color.replace(')', ', 0.2)').replace('rgb', 'rgba');
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.arc(x, y, r, 0, Math.PI * 2);
+      ctx.fillStyle = color;
+      ctx.fill();
+      ctx.strokeStyle = '#1a2535';
+      ctx.lineWidth   = 2;
+      ctx.stroke();
+
+      ctx.fillStyle    = 'rgba(227,237,245,0.88)';
+      ctx.font         = `${isEnd ? 11 : 10}px "DM Sans", sans-serif`;
+      ctx.textBaseline = 'middle';
+      const rightSide  = x > W * 0.78;
+      ctx.textAlign    = rightSide ? 'right' : 'left';
+      ctx.fillText(c.name, rightSide ? x - 10 : x + 10, y);
+    });
+  }
+
+  // ── Preview update ────────────────────────────────────────────────────────────
+  function updatePreview() {
+    const allCities = [resolvedCities.origin, ...midStops.map(s => s.city), resolvedCities.dest];
+    const modeSelects = getAllModeSelects();
+    const pax = Math.max(1, parseInt(document.getElementById('passengers').value) || 1);
+
+    let totalDist = 0, totalKg = 0;
+    const legData = [];
+
+    for (let i = 0; i < modeSelects.length; i++) {
+      const c1   = allCities[i];
+      const c2   = allCities[i + 1];
+      const mode = modeSelects[i]?.value || '';
+      const ef   = EF[mode] || 0;
+      const from = c1?.name || (i === 0 ? document.getElementById('origin-input').value : `Stop ${i}`);
+      const to   = c2?.name || (i + 1 === allCities.length - 1 ? document.getElementById('dest-input').value : `Stop ${i+1}`);
+
+      if (c1 && c2 && ef > 0) {
+        const legDist = haversine(c1, c2);
+        const legKg   = VEHICLE_KM.has(mode) ? Math.round(legDist * ef) : Math.round(legDist * ef * pax);
+        legData.push({ from, to, dist: legDist, kg: legKg, ok: true });
+        totalDist += legDist;
+        totalKg   += legKg;
+      } else {
+        legData.push({ from, to, dist: 0, kg: 0, ok: false });
+      }
+    }
+
+    if (appState.isReturn && legData.length === 1 && legData[0].ok) {
+      totalDist *= 2; totalKg *= 2;
+    }
+
+    const anyOk = legData.some(l => l.ok);
+    document.getElementById('em-legs').textContent  = legData.length + (appState.isReturn ? '+ret' : '');
+    document.getElementById('em-dist').textContent  = anyOk ? totalDist.toLocaleString() : '–';
+    document.getElementById('em-total').textContent = anyOk ? totalKg.toLocaleString()   : '–';
+    document.getElementById('em-preview').style.display = anyOk ? 'flex' : 'none';
+
+    const bd = document.getElementById('leg-breakdown');
+    if (legData.length > 1) {
+      bd.style.display = 'block';
+      bd.innerHTML = legData.map((l, i) => l.ok
+        ? `<div class="leg-row">
+             <span class="leg-route">Leg ${i+1}: ${l.from} → ${l.to} (${l.dist.toLocaleString()} km)</span>
+             <span class="leg-kg">${l.kg.toLocaleString()} kg</span>
+           </div>`
+        : `<div class="leg-row">
+             <span class="leg-route" style="color:var(--text-light)">Leg ${i+1}: ${l.from} → ${l.to}</span>
+             <span class="leg-kg" style="color:var(--text-light)">–</span>
+           </div>`
+      ).join('');
+    } else {
+      bd.style.display = 'none';
+    }
+
+    const routeLabel = allCities.filter(Boolean).map(c => c.name).join(' → ');
+    document.getElementById('map-title').textContent = routeLabel || 'Route map';
+    document.getElementById('map-meta').textContent  = anyOk
+      ? `${totalDist.toLocaleString()} km · ${(totalKg / 1000).toFixed(2)} tCO₂e`
+      : 'Select cities to see estimate';
+
+    drawCanvas(allCities);
+  }
+
+  // ── Return toggle ─────────────────────────────────────────────────────────────
+  function toggleReturn() {
+    if (midStops.length > 0) return;
+    appState.isReturn = !appState.isReturn;
+    document.getElementById('ret-track').className = 'toggle-track' + (appState.isReturn ? ' on' : '');
+    updatePreview();
+  }
+
+  // ── Validation + submit ───────────────────────────────────────────────────────
+  function showError(msg) {
+    const el = document.getElementById('client-error');
+    el.textContent = msg;
+    el.style.display = 'block';
+    el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }
+  function hideError() { document.getElementById('client-error').style.display = 'none'; }
+
+  function onSubmit() {
+    hideError();
+    const originVal = document.getElementById('origin-input').value.trim();
+    const destVal   = document.getElementById('dest-input').value.trim();
+    if (!originVal)             return showError('Please enter an origin city.');
+    if (!destVal)               return showError('Please enter a destination city.');
+    if (!resolvedCities.origin) return showError(`"${originVal}" not found. Try a major city name from the dropdown.`);
+    if (!resolvedCities.dest)   return showError(`"${destVal}" not found. Try a major city name from the dropdown.`);
+    for (const s of midStops) {
+      const inp = document.getElementById(`stop-input-${s.id}`);
+      if (!inp || !inp.value.trim()) return showError('All stopover fields must be filled, or remove unused rows.');
+      if (!s.city) return showError(`Stopover "${inp.value}" not found. Try a major city name from the dropdown.`);
+    }
+    document.getElementById('loading').style.display = 'block';
+    setTimeout(() => { window.location.href = 'results.html'; }, 800);
+  }
+
+  // ── Demo quick-fill ───────────────────────────────────────────────────────────
+  function resetStops() {
+    midStops.forEach(s => {
+      document.getElementById(`stop-row-${s.id}`)?.remove();
+      document.getElementById(`leg-mode-${s.id}`)?.remove();
+    });
+    midStops = [];
+    refreshReturnToggle();
+    updateDotLabels();
+  }
+
+  function demoTrip(key) {
+    hideError();
+    resetStops();
+    appState.isReturn = false;
+    document.getElementById('ret-track').className = 'toggle-track';
+
+    const fill = (inputId, cityName, stateKey) => {
+      document.getElementById(inputId).value = cityName;
+      resolvedCities[stateKey] = resolveCity(cityName);
+    };
+
+    if (key === 'lhr-dxb') {
+      fill('origin-input', 'London', 'origin');
+      fill('dest-input',   'Dubai',  'dest');
+      document.getElementById('leg-mode-select-0').value = 'Flight-LongHaul-Economy';
+
+    } else if (key === 'man-nyc') {
+      fill('origin-input', 'Manchester', 'origin');
+      fill('dest-input',   'New York',   'dest');
+      document.getElementById('leg-mode-select-0').value = 'Flight-LongHaul-Economy';
+
+    } else if (key === 'lon-sin-mel') {
+      fill('origin-input', 'London',    'origin');
+      fill('dest-input',   'Melbourne', 'dest');
+      document.getElementById('leg-mode-select-0').value = 'Flight-LongHaul-Economy';
+      addStopover();
+      const sid = midStops[0].id;
+      document.getElementById(`stop-input-${sid}`).value = 'Singapore';
+      midStops[0].city = resolveCity('Singapore');
+      document.getElementById(`leg-mode-select-${sid}`).value = 'Flight-LongHaul-Economy';
+
+    } else if (key === 'lon-par-rail') {
+      fill('origin-input', 'London', 'origin');
+      fill('dest-input',   'Paris',  'dest');
+      document.getElementById('leg-mode-select-0').value = 'Train-International';
+    }
+
+    updatePreview();
+  }
+
+  // ── Init ──────────────────────────────────────────────────────────────────────
+  document.getElementById('trip-date').value = new Date().toISOString().split('T')[0];
+  drawCanvas([]);
+
+  // Redraw on resize
+  window.addEventListener('resize', () => {
+    const allCities = [resolvedCities.origin, ...midStops.map(s => s.city), resolvedCities.dest];
+    drawCanvas(allCities);
+  });
   </script>
 </body>
 </html>
